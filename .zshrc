@@ -63,12 +63,10 @@ source $ZSH/oh-my-zsh.sh
 
 export HOMEBREW_GITHUB_API_TOKEN=$(cat ~/.dotfiles/homebrew_api_token)
 
-# Customize to your needs...
-export PATH=$PATH:~/bin
-
-
 #THIS MUST BE AT THE END OF THE FILE FOR JENV TO WORK!!!
 [[ -s "/Users/davida/.jenv/bin/jenv-init.sh" ]] && source "/Users/davida/.jenv/bin/jenv-init.sh" && source "/Users/davida/.jenv/commands/completion.sh"
 export PATH="$HOME/.jenv/bin:$PATH"
 eval "$(jenv init -)"
 
+
+. $HOME/.shellrc.load
