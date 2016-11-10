@@ -1,0 +1,14 @@
+[alias]
+	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+	co = checkout
+	fo = fetch origin
+	po = push origin
+	br = branch
+	rb = rebase
+[push]
+	default = simple
+[user]
+	email = davidaayers@gmail.com
+	name = David Ayers
+[core]
+	pager = less -+X -+F
