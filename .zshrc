@@ -67,6 +67,6 @@ export HOMEBREW_GITHUB_API_TOKEN=$(cat ~/.dotfiles/homebrew_api_token)
 [[ -s "/Users/davida/.jenv/bin/jenv-init.sh" ]] && source "/Users/davida/.jenv/bin/jenv-init.sh" && source "/Users/davida/.jenv/commands/completion.sh"
 export PATH="$HOME/.jenv/bin:$PATH"
 eval "$(jenv init -)"
-
+eval "$(rbenv init -)"
 
 . $HOME/.shellrc.load
