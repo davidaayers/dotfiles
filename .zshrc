@@ -20,7 +20,7 @@ alias revpoms='find . -name "pom.xml" -exec git checkout --ours {} \;'
 alias gfo="git fetch origin"
 alias tcsappsdev='ssh davida@labappas3dev'
 alias gprune='git remote prune origin && git branch --merged | grep -v "\*" | xargs -n 1 git branch -d'
-alias ij='open -a /Applications/IntelliJ\ IDEA\ 15.app .'
+alias ij='open -a /Applications/IntelliJ\ IDEA.app .'
 
 __git_files () { 
     _wanted files expl 'local files' _files 
