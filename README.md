@@ -1,28 +1,16 @@
-# Dotfiles
+# David Ayers Dotfiles & Misc Setup Stuff
 
-## Overview
+## Installing dotfiles
 
-This repo is a skeleton/template repo for tracking dotfiles.  It contains
-a utility ([dfm](https://github.com/justone/dfm)) to help with managing and
-updating your dotfiles.
-
-## Using this repo
-
-First, fork this repo.
-
-Then, add your dotfiles:
-
-    $ git clone git@github.com:username/dotfiles.git .dotfiles
-    $ cd .dotfiles
-    $  # edit files
-    $  # edit files
-    $ git push origin master
-
-Finally, to install your dotfiles onto a new system:
+To install your dotfiles onto a new system:
 
     $ cd $HOME
     $ git clone git@github.com:username/dotfiles.git .dotfiles
     $ ./.dotfiles/bin/dfm install # creates symlinks to install files
+
+## Other Setup Stuff for new Mac:
+
+* Install Anonymous Pro: https://www.marksimonson.com/fonts/view/anonymous-pro
 
 ## Full documentation
 
