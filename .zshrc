@@ -16,16 +16,12 @@ export LESS="R"
 
 alias gs='git status -sb'
 alias mci='mvn clean install'
-alias revpoms='find . -name "pom.xml" -exec git checkout --ours {} \;'
 alias gfo="git fetch origin"
-alias tcsappsdev='ssh davida@labappas3dev'
 alias gprune='git remote prune origin && git branch --merged | grep -v "\*" | xargs -n 1 git branch -d'
-alias ij='open -a /Applications/IntelliJ\ IDEA.app .'
 
 __git_files () { 
     _wanted files expl 'local files' _files 
 }
-
 
 # Set to this to use case-sensitive completion
 # CASE_SENSITIVE="true"
@@ -62,11 +58,5 @@ plugins=(git mvn git-extras vi-mode)
 source $ZSH/oh-my-zsh.sh
 
 export HOMEBREW_GITHUB_API_TOKEN=$(cat ~/.dotfiles/homebrew_api_token)
-
-#THIS MUST BE AT THE END OF THE FILE FOR JENV TO WORK!!!
-[[ -s "/Users/davida/.jenv/bin/jenv-init.sh" ]] && source "/Users/davida/.jenv/bin/jenv-init.sh" && source "/Users/davida/.jenv/commands/completion.sh"
-export PATH="$HOME/.jenv/bin:$PATH"
-eval "$(jenv init -)"
-eval "$(rbenv init -)"
 
 . $HOME/.shellrc.load
