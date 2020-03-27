@@ -12,3 +12,5 @@
 	name = David Ayers
 [core]
 	pager = less -+X -+F
+[pull]
+	rebase = true
