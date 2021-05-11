@@ -1,6 +1,8 @@
 # Install Cask for managing gui programs
 brew "git"
 brew "cask"
+brew "fzsh-syntax-highlighting"
+brew "zsh-history-substring-search"
 
 cask "sublime-text"
 cask "alfred"

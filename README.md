@@ -1,5 +1,11 @@
 # David Ayers Dotfiles & Misc Setup Stuff
 
+## First, install Ohmyzsh
+
+https://ohmyz.sh/#install
+
+`sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"`
+
 ## Installing dotfiles
 
 To install your dotfiles onto a new system:
@@ -7,6 +13,18 @@ To install your dotfiles onto a new system:
     $ cd $HOME
     $ git clone git@github.com:username/dotfiles.git .dotfiles
     $ ./.dotfiles/bin/dfm install # creates symlinks to install files
+
+## Setup tokens
+
+* Homebrew github token - under Settings > Developer Settings > Personal Access Token (it doesn't need any specific permissions)
+  `~/.dotfiles/homebrew_api_token`
+
+* NPM Token - needs publish
+  `~/.dotfiles/homebrew_api_token`
+
+## Alfred Setup
+
+* [Github Workflow](https://github.com/gharlan/alfred-github-workflow) - install [latest release](https://github.com/gharlan/alfred-github-workflow/releases)
 
 ## Other Setup Stuff for new Mac:
 
