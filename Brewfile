@@ -10,6 +10,7 @@ cask "visual-studio-code"
 cask "slack"
 cask "docker"
 
+brew "act"
 brew "nvm"
 
 tap "heroku/brew"
