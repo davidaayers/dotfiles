@@ -9,6 +9,7 @@ cask "alfred"
 cask "visual-studio-code"
 cask "slack"
 cask "docker"
+cask "gimp"
 
 brew "act"
 brew "nvm"
