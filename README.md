@@ -6,13 +6,21 @@ https://ohmyz.sh/#install
 
 `sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"`
 
+## Install Homebrew
+
+https://brew.sh/
+
+`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+
 ## Installing dotfiles
 
 To install your dotfiles onto a new system:
 
-    $ cd $HOME
-    $ git clone git@github.com:username/dotfiles.git .dotfiles
-    $ ./.dotfiles/bin/dfm install # creates symlinks to install files
+```
+cd $HOME
+git clone git@github.com:username/dotfiles.git .dotfiles
+./.dotfiles/bin/dfm install # creates symlinks to install files
+```
 
 ## Setup tokens
 
@@ -20,7 +28,15 @@ To install your dotfiles onto a new system:
   `~/.dotfiles/homebrew_api_token`
 
 * NPM Token - needs publish
-  `~/.dotfiles/homebrew_api_token`
+  `~/.dotfiles/npm_token`
+
+
+## Setup Programs
+
+The `Brewfile` included in the .dotfiles directory uses [brew bundle](https://github.com/Homebrew/homebrew-bundle) to setup every program in that file with one simple command:
+
+`brew bundle`
+
 
 ## Alfred Setup
 

@@ -69,3 +69,6 @@ bindkey '^[OA' history-substring-search-up
 bindkey '^[OB' history-substring-search-down
 
 . $HOME/.shellrc.load
+
+export VOLTA_HOME="$HOME/.volta"
+export PATH="$VOLTA_HOME/bin:$PATH"
