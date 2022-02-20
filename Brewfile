@@ -10,6 +10,7 @@ cask "visual-studio-code"
 cask "slack"
 cask "docker"
 cask "gimp"
+cask "firefox"
 
 brew "act"
 brew "nvm"
