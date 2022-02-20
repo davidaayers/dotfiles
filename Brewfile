@@ -4,6 +4,9 @@ brew "cask"
 brew "zsh-syntax-highlighting"
 brew "zsh-history-substring-search"
 
+# Needed for Alfred Github workflow
+brew "php"
+
 cask "sublime-text"
 cask "alfred"
 cask "visual-studio-code"
