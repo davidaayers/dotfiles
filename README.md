@@ -52,6 +52,3 @@ For more information, check out the [wiki](http://github.com/justone/dotfiles/wi
 
 You can also run <tt>dfm --help</tt>.
 
-## Other stuff to look into:
-
-* https://stevenrbaker.com/tech/managing-dotfiles-with-gnu-stow.html
