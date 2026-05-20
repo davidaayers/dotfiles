@@ -2,7 +2,7 @@
 	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
 	co = checkout
 	fo = fetch origin
-	po = push origin
+	po = push origin 
 	br = branch
 	rb = rebase
 [push]
@@ -12,6 +12,7 @@
 	name = David Ayers
 [core]
 	pager = less -+X -+F
+	editor = mate -w
 [pull]
 	rebase = true
 [init]

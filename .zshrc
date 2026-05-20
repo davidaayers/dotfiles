@@ -5,9 +5,9 @@ ZSH=$HOME/.oh-my-zsh
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
-ZSH_THEME="kphoen"
+ZSH_THEME="bira-custom"
 
-export EDITOR='subl -w'
+export EDITOR='mate -w'
 export LESS="R"
 
 # Example aliases
@@ -51,7 +51,7 @@ __git_files () {
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(alias-finder git git-extras vi-mode copydir copyfile docker docker-compose npm)
+plugins=(alias-finder git git-extras vi-mode copyfile docker docker-compose npm)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -73,3 +73,4 @@ bindkey '^[OB' history-substring-search-down
 
 export VOLTA_HOME="$HOME/.volta"
 export PATH="$VOLTA_HOME/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
