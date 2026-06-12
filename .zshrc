@@ -35,7 +35,7 @@ __git_files () {
 # DISABLE_LS_COLORS="true"
 
 # Uncomment following line if you want to disable autosetting terminal title.
-# DISABLE_AUTO_TITLE="true"
+DISABLE_AUTO_TITLE="true"
 
 # Uncomment following line if you want to disable command autocorrection
 # DISABLE_CORRECTION="true"

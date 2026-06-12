@@ -7,11 +7,12 @@
 	rb = rebase
 [push]
 	default = simple
+	autoSetupRemote = true
 [user]
-	email = davidaayers@gmail.com
+	email = david.ayers@invitationhomes.com
 	name = David Ayers
 [core]
-	pager = less -+X -+F
+	pager = less -FRX
 	editor = mate -w
 [pull]
 	rebase = true
