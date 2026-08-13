@@ -60,4 +60,6 @@ machine paths or credentials:
 - Node version management: **Volta** only (`~/.volta/bin` on PATH)
 - History search: `zsh-history-substring-search` bound to arrow keys
 - Syntax highlighting: `zsh-syntax-highlighting` (both installed via Homebrew)
-- `tab-chroma` (iTerm2 tab color plugin for Claude Code) is vendored under `bin/tab-chroma/`
+- `tab-chroma` (iTerm2 tab color plugin for Claude Code) is vendored under
+  `.config/tab-chroma/`. Its `config.json` is gitignored because the script
+  rewrites it on theme/feature toggles; `ensure_config()` regenerates defaults.

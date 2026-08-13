@@ -71,7 +71,7 @@ export PATH="$HOME/.local/bin:$PATH"
 [ -f "$HOME/.zshrc.local" ] && . "$HOME/.zshrc.local"
 
 # tab-chroma
-alias tab-chroma="$HOME/bin/tab-chroma/tab-chroma.sh"
+alias tab-chroma="$HOME/.config/tab-chroma/tab-chroma.sh"
 
 # tab-chroma: reset tab on claude exit
 claude() {
