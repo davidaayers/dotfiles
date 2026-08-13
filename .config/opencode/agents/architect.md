@@ -1,6 +1,7 @@
 ---
 description: Reviewer for non-visual OpenSpec changes — backend, game logic, and online services. Checks correctness, layer boundaries, invariants, security, local-first behavior, and spec quality. Use after a change's proposal and specs are drafted, to fold recommendations in before implementation.
 mode: subagent
+model: opencode-go/kimi-k2.7-code
 permission:
   edit: deny
 ---
