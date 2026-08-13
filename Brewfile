@@ -8,6 +8,7 @@ brew "zsh-history-substring-search"
 brew "php"
 
 cask "sublime-text"
+cask "textmate"
 cask "alfred"
 cask "visual-studio-code"
 cask "slack"
@@ -16,7 +17,6 @@ cask "gimp"
 cask "firefox"
 
 brew "act"
-brew "nvm"
 
 tap "heroku/brew"
 brew "heroku"

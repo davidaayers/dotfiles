@@ -22,20 +22,24 @@ git clone git@github.com:davidaayers/dotfiles.git .dotfiles
 ./.dotfiles/bin/dfm install # creates symlinks to install files
 ```
 
-## Setup tokens
+## Machine-specific setup (not committed)
 
-* Homebrew github token - under Settings > Developer Settings > Personal Access Token (it doesn't need any specific permissions)
-  `~/.dotfiles/homebrew_api_token`
+Secrets and identity are kept out of the repo. Create these locally:
 
-* NPM Token - needs publish
-  `~/.dotfiles/npm_token`
-
+* `~/.zshrc.local` (sourced by `.zshrc`) — exports tokens read from `~/.config/secrets/`:
+  * `~/.config/secrets/homebrew_api_token` — GitHub PAT (no permissions needed) for Homebrew
+  * `~/.config/secrets/npm_token` — NPM token with publish access
+* `~/.gitconfig.local` (included by `.gitconfig`) — git `[user]` identity, and a
+  work-specific `core.hooksPath` if you use the Invitation Homes
+  `git-shared-hooks` checkout at `~/git-shared-hooks`.
 
 ## Setup Programs
 
 The `Brewfile` included in the .dotfiles directory uses [brew bundle](https://github.com/Homebrew/homebrew-bundle) to setup every program in that file with one simple command:
 
 `brew bundle`
+
+Node is managed with [Volta](https://volta.sh/) (installed separately, not via Brewfile).
 
 
 ## Alfred Setup

@@ -22,28 +22,42 @@ git clone git@github.com:davidaayers/dotfiles.git .dotfiles
 brew bundle
 ```
 
-After install, populate token files:
-- `~/.dotfiles/homebrew_api_token` — GitHub PAT (no permissions needed) for Homebrew
-- `~/.dotfiles/npm_token` — NPM token with publish access
+## Machine-specific setup (not committed)
+
+Secrets and identity live outside the repo so a fresh clone has no hardcoded
+machine paths or credentials:
+
+- `~/.zshrc.local` — sourced by `.zshrc` if present. Holds secret exports
+  (`HOMEBREW_GITHUB_API_TOKEN`, `NPM_AUTH_TOKEN`) and personal model prefs.
+  Tokens are read from `~/.config/secrets/`.
+  - `~/.config/secrets/homebrew_api_token` — GitHub PAT (no permissions needed) for Homebrew
+  - `~/.config/secrets/npm_token` — NPM token with publish access
+- `~/.gitconfig.local` — included by `.gitconfig` via `[include]`. Holds `[user]`
+  identity. The committed `.gitconfig` sets `core.hooksPath = ~/git-shared-hooks`
+  (an Invitation Homes checkout); harmless where that dir doesn't exist.
 
 ## dfm behavior
 
 - `bin/dfm install` symlinks all files from this repo into `$HOME`, preserving directory structure
-- `.dfminstall` controls exceptions: files listed with `skip` are **not** symlinked (`README.md` and `Brewfile` are skipped so they don't pollute `$HOME`)
+- `.dfminstall` controls exceptions: `skip` entries are **not** symlinked
+  (`README.md` and `Brewfile`), `recurse` entries are recursed into so only
+  their contents get symlinked (`.config`, `.oh-my-zsh`)
 - After adding a new dotfile here, re-run `bin/dfm install` to create its symlink
 
 ## Key files
 
 | File | Purpose |
 |------|---------|
-| `.zshrc` | Oh My Zsh config; theme `bira-custom`, plugins, PATH setup, token loading |
-| `.gitconfig` | Git aliases, user identity, pull-rebase default |
+| `.zshrc` | Oh My Zsh config; theme `bira-custom`, plugins, PATH setup |
+| `.gitconfig` | Git aliases, pull-rebase default, includes `~/.gitconfig.local` |
 | `.shellrc.load` | Sourced by `.zshrc`; place for additional PATH entries and shell customizations |
 | `Brewfile` | Declarative list of all Homebrew packages and casks |
+| `.config/opencode/` | opencode global config, agents, and plugin deps (symlinked into `~/.config/opencode`) |
 
 ## Shell setup notes
 
-- Theme: `bira-custom` (custom variant of bira, stored in `~/.oh-my-zsh/custom/themes/`)
-- Node version management: **Volta** (primary, `~/.volta/bin` on PATH) and **nvm** (fallback, loaded from `/usr/local/opt/nvm`)
+- Theme: `bira-custom` (custom variant of bira, committed under `.oh-my-zsh/custom/themes/`)
+- Node version management: **Volta** only (`~/.volta/bin` on PATH)
 - History search: `zsh-history-substring-search` bound to arrow keys
 - Syntax highlighting: `zsh-syntax-highlighting` (both installed via Homebrew)
+- `tab-chroma` (iTerm2 tab color plugin for Claude Code) is vendored under `bin/tab-chroma/`

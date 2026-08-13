@@ -55,16 +55,8 @@ plugins=(alias-finder git git-extras vi-mode copyfile docker docker-compose npm)
 
 source $ZSH/oh-my-zsh.sh
 
-export HOMEBREW_GITHUB_API_TOKEN=$(cat ~/.dotfiles/homebrew_api_token)
-export NPM_AUTH_TOKEN=$(cat ~/.dotfiles/npm_token)
-
-export NVM_DIR="$HOME/.nvm"
-  [ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
-  [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && . "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
-
-
-source /opt/homebrew/share/zsh-history-substring-search/zsh-history-substring-search.zsh
-source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source "$(brew --prefix)/share/zsh-history-substring-search/zsh-history-substring-search.zsh"
+source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
 bindkey '^[OA' history-substring-search-up
 bindkey '^[OB' history-substring-search-down
@@ -74,3 +66,21 @@ bindkey '^[OB' history-substring-search-down
 export VOLTA_HOME="$HOME/.volta"
 export PATH="$VOLTA_HOME/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
+
+# Machine-specific overrides (secrets, model prefs). Not part of dotfiles.
+[ -f "$HOME/.zshrc.local" ] && . "$HOME/.zshrc.local"
+
+# tab-chroma
+alias tab-chroma="$HOME/bin/tab-chroma/tab-chroma.sh"
+
+# tab-chroma: reset tab on claude exit
+claude() {
+  command claude "$@"
+  tab-chroma reset > /dev/null 2>&1
+}
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
+# opencode
+export PATH="$HOME/.opencode/bin:$PATH"

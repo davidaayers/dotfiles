@@ -1,3 +1,5 @@
+[include]
+	path = ~/.gitconfig.local
 [alias]
 	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
 	co = checkout
@@ -8,9 +10,6 @@
 [push]
 	default = simple
 	autoSetupRemote = true
-[user]
-	email = david.ayers@invitationhomes.com
-	name = David Ayers
 [core]
 	pager = less -FRX
 	editor = mate -w
