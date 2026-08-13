@@ -21,8 +21,6 @@ brew "act"
 tap "heroku/brew"
 brew "heroku"
 
-brew "postgres"
-
 brew "git-extras"
 
 brew "tree"
