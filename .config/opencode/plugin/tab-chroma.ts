@@ -180,28 +180,37 @@ export default async ({ directory, client }: { directory: string; client: any })
     lastTitle = title
     try {
       writeFileSync(resolveDevice(), `\x1b]0;${title}\x07`)
-    } catch {
-      // Visual feedback is best-effort; never break opencode over a tab title.
+      log("info", "title", { title })
+    } catch (e) {
+      log("error", "title write failed", { error: String(e) })
     }
   }
 
-  const cwdFor = (sid: string): string => sessions.get(sid)?.cwd ?? directory
+  // Lazily create a session entry so title tracking works even when
+  // `session.created` never fires (e.g. a resumed session).
+  const ensure = (sid: string): Session => {
+    let s = sessions.get(sid)
+    if (!s) {
+      s = { cwd: directory, activity: null, phase: "working" }
+      sessions.set(sid, s)
+    }
+    return s
+  }
+
+  const cwdFor = (sid: string): string => ensure(sid).cwd
 
   const setPhase = (sid: string, phase: Phase) => {
-    const s = sessions.get(sid)
-    if (s) s.phase = phase
+    ensure(sid).phase = phase
   }
 
   const setActivity = (sid: string, activity: string | null) => {
-    const s = sessions.get(sid)
-    if (s) s.activity = activity
+    ensure(sid).activity = activity
   }
 
   const phaseOf = (sid: string): Phase | undefined => sessions.get(sid)?.phase
 
   function updateTitle(sid: string) {
-    const s = sessions.get(sid)
-    if (!s) return
+    const s = ensure(sid)
     const project = basename(s.cwd)
     const label =
       s.phase === "permission" ? "needs approval"
@@ -225,12 +234,14 @@ export default async ({ directory, client }: { directory: string; client: any })
           const info = props.info ?? {}
           const cwd = info.directory || directory
           sessions.set(info.id, { cwd, activity: null, phase: "start" })
+          log("info", "event", { type: "session.created", id: info.id, cwd })
           await emit("SessionStart", info.id, cwd)
           updateTitle(info.id)
           break
         }
         case "session.status": {
           const sid = props.sessionID
+          log("info", "event", { type: "session.status", status: props.status?.type, sid })
           if (props.status?.type === "busy") {
             setPhase(sid, "working")
             await emit("PreToolUse", sid, cwdFor(sid))
@@ -243,6 +254,7 @@ export default async ({ directory, client }: { directory: string; client: any })
         }
         case "session.idle": {
           const sid = props.sessionID
+          log("info", "event", { type: "session.idle", sid })
           setActivity(sid, null)
           setPhase(sid, "done")
           await emit("Stop", sid, cwdFor(sid))
@@ -254,14 +266,15 @@ export default async ({ directory, client }: { directory: string; client: any })
           const sid = part?.sessionID
           if (!sid) break
           if (part.type === "tool") {
+            setPhase(sid, "working")
             setActivity(sid, describeTool(part.tool, part.state?.input))
-          } else if (part.type === "text" || part.type === "reasoning") {
-            setActivity(sid, "thinking")
-          } else {
-            break
-          }
-          if (phaseOf(sid) === "working") {
+            log("info", "event", { type: "tool", tool: part.tool, sid })
             updateTitle(sid)
+          } else if (part.type === "text" || part.type === "reasoning") {
+            if (phaseOf(sid) === "working") {
+              setActivity(sid, "thinking")
+              updateTitle(sid)
+            }
           }
           break
         }
