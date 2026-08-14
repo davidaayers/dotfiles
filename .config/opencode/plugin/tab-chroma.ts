@@ -13,6 +13,9 @@
 // rather than the script's static "working". Keeping this logic in the plugin
 // means the vendored script stays untouched — and safe from `tab-chroma update`.
 
+import { writeFileSync, readFileSync, existsSync } from "node:fs"
+import { spawnSync } from "node:child_process"
+
 declare const Bun: any
 
 const HOME = process.env.HOME ?? ""
@@ -50,8 +53,8 @@ let cachedDevice: string | null = null
 
 function runSync(args: string[]): string {
   try {
-    const proc = Bun.spawnSync(args, { stdout: "pipe", stderr: "ignore" })
-    return (proc.stdout?.toString() ?? "").trim()
+    const r = spawnSync(args[0], args.slice(1), { encoding: "utf8" })
+    return (r.stdout ?? "").trim()
   } catch {
     return ""
   }
@@ -71,34 +74,6 @@ function resolveDevice(): string {
   }
   cachedDevice = "/dev/tty"
   return cachedDevice
-}
-
-// ─── title output ──────────────────────────────────────────────────────────────
-
-let lastTitle: string | null = null
-
-async function titleActive(): Promise<boolean> {
-  try {
-    if (await Bun.file(PAUSED).exists()) return false
-    const cfg = JSON.parse(await Bun.file(CONFIG).text())
-    if (cfg.enabled === false) return false
-    return cfg.features?.title !== false
-  } catch {
-    return true
-  }
-}
-
-async function setTitle(title: string) {
-  if (title === lastTitle) return
-  if (!(await titleActive())) return
-  if (terminal() === "unsupported") return
-  lastTitle = title
-  const dev = resolveDevice()
-  try {
-    await Bun.write(dev, `\x1b]0;${title}\x07`)
-  } catch {
-    // Visual feedback is best-effort; never break opencode over a tab title.
-  }
 }
 
 // ─── activity description ──────────────────────────────────────────────────────
@@ -122,11 +97,11 @@ function describeTool(tool: string, input: any): string {
     case "bash":
       return str(i.command) ? `bash ${truncate(str(i.command), 40)}` : "bash"
     case "read":
-      return str(i.file_path) ? `reading ${basename(str(i.file_path))}` : "reading"
+      return str(i.filePath) ? `reading ${basename(str(i.filePath))}` : "reading"
     case "edit":
-      return str(i.file_path) ? `editing ${basename(str(i.file_path))}` : "editing"
+      return str(i.filePath) ? `editing ${basename(str(i.filePath))}` : "editing"
     case "write":
-      return str(i.file_path) ? `writing ${basename(str(i.file_path))}` : "writing"
+      return str(i.filePath) ? `writing ${basename(str(i.filePath))}` : "writing"
     case "apply_patch":
       return "applying patch"
     case "grep":
@@ -175,8 +150,40 @@ async function emit(hookEvent: HookEvent, sessionID: string, cwd: string) {
 
 // ─── plugin ────────────────────────────────────────────────────────────────────
 
-export default async ({ directory }: { directory: string }) => {
+export default async ({ directory, client }: { directory: string; client: any }) => {
   const sessions = new Map<string, Session>()
+  let lastTitle: string | null = null
+
+  function log(level: string, message: string, extra?: Record<string, unknown>) {
+    try {
+      client?.app?.log?.({ body: { service: "tab-chroma", level, message, extra } })
+    } catch {
+      // logging is best-effort
+    }
+  }
+
+  function titleActive(): boolean {
+    try {
+      if (existsSync(PAUSED)) return false
+      const cfg = JSON.parse(readFileSync(CONFIG, "utf8"))
+      if (cfg.enabled === false) return false
+      return cfg.features?.title !== false
+    } catch {
+      return true
+    }
+  }
+
+  function setTitle(title: string) {
+    if (title === lastTitle) return
+    if (!titleActive()) return
+    if (terminal() === "unsupported") return
+    lastTitle = title
+    try {
+      writeFileSync(resolveDevice(), `\x1b]0;${title}\x07`)
+    } catch {
+      // Visual feedback is best-effort; never break opencode over a tab title.
+    }
+  }
 
   const cwdFor = (sid: string): string => sessions.get(sid)?.cwd ?? directory
 
@@ -192,7 +199,7 @@ export default async ({ directory }: { directory: string }) => {
 
   const phaseOf = (sid: string): Phase | undefined => sessions.get(sid)?.phase
 
-  async function updateTitle(sid: string) {
+  function updateTitle(sid: string) {
     const s = sessions.get(sid)
     if (!s) return
     const project = basename(s.cwd)
@@ -201,8 +208,13 @@ export default async ({ directory }: { directory: string }) => {
       : s.phase === "done" ? "done"
       : s.phase === "start" ? "starting"
       : (s.activity ?? "working")
-    await setTitle(project ? `◉ ${project} · ${label}` : `◉ ${label}`)
+    setTitle(project ? `◉ ${project} · ${label}` : `◉ ${label}`)
   }
+
+  log("info", "opencode plugin loaded", {
+    device: resolveDevice(),
+    terminal: terminal(),
+  })
 
   return {
     async event({ event }: { event: any }) {
@@ -214,7 +226,7 @@ export default async ({ directory }: { directory: string }) => {
           const cwd = info.directory || directory
           sessions.set(info.id, { cwd, activity: null, phase: "start" })
           await emit("SessionStart", info.id, cwd)
-          await updateTitle(info.id)
+          updateTitle(info.id)
           break
         }
         case "session.status": {
@@ -222,10 +234,10 @@ export default async ({ directory }: { directory: string }) => {
           if (props.status?.type === "busy") {
             setPhase(sid, "working")
             await emit("PreToolUse", sid, cwdFor(sid))
-            await updateTitle(sid)
+            updateTitle(sid)
           } else if (props.status?.type === "idle") {
             setPhase(sid, "done")
-            await updateTitle(sid)
+            updateTitle(sid)
           }
           break
         }
@@ -234,7 +246,7 @@ export default async ({ directory }: { directory: string }) => {
           setActivity(sid, null)
           setPhase(sid, "done")
           await emit("Stop", sid, cwdFor(sid))
-          await updateTitle(sid)
+          updateTitle(sid)
           break
         }
         case "message.part.updated": {
@@ -249,7 +261,7 @@ export default async ({ directory }: { directory: string }) => {
             break
           }
           if (phaseOf(sid) === "working") {
-            await updateTitle(sid)
+            updateTitle(sid)
           }
           break
         }
@@ -260,7 +272,7 @@ export default async ({ directory }: { directory: string }) => {
       const sid = input.sessionID
       if (sid) setPhase(sid, "permission")
       await emit("PermissionRequest", sid, cwdFor(sid))
-      if (sid) await updateTitle(sid)
+      if (sid) updateTitle(sid)
     },
   }
 }
