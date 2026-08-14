@@ -33,8 +33,10 @@ machine paths or credentials:
   - `~/.config/secrets/homebrew_api_token` — GitHub PAT (no permissions needed) for Homebrew
   - `~/.config/secrets/npm_token` — NPM token with publish access
 - `~/.gitconfig.local` — included by `.gitconfig` via `[include]`. Holds `[user]`
-  identity. The committed `.gitconfig` sets `core.hooksPath = ~/git-shared-hooks`
-  (an Invitation Homes checkout); harmless where that dir doesn't exist.
+  identity, plus a work-specific `core.hooksPath` pointing at the Invitation
+  Homes `git-shared-hooks` checkout (`~/git-shared-hooks`).
+
+Full install/setup docs live in `README.md` (canonical).
 
 ## dfm behavior
 
@@ -58,6 +60,8 @@ machine paths or credentials:
 
 - Theme: `bira-custom` (custom variant of bira, committed under `.oh-my-zsh/custom/themes/`)
 - Node version management: **Volta** only (`~/.volta/bin` on PATH)
+- Python: **pyenv** (`~/.pyenv`), initialized in `.zshrc` via `pyenv init -` (installed separately, not via Brewfile)
+- `$EDITOR` is TextMate (`mate -w`); enable its CLI via TextMate → Settings → Terminal → Install Shell Support
 - History search: `zsh-history-substring-search` bound to arrow keys
 - Syntax highlighting: `zsh-syntax-highlighting` (both installed via Homebrew)
 - `tab-chroma` (iTerm2 tab color plugin for Claude Code) is vendored under

@@ -41,6 +41,8 @@ The `Brewfile` included in the .dotfiles directory uses [brew bundle](https://gi
 
 Node is managed with [Volta](https://volta.sh/) (installed separately, not via Brewfile).
 
+Python is managed with [pyenv](https://github.com/pyenv/pyenv) (installed separately, not via Brewfile).
+
 ## tab-chroma (iTerm2 tab colors)
 
 [tab-chroma](https://github.com/JCPetrelli/TabChroma) changes the iTerm2 tab
@@ -89,6 +91,7 @@ Notes:
 ## Other Setup Stuff for new Mac:
 
 * Install Anonymous Pro: https://www.marksimonson.com/fonts/view/anonymous-pro
+* TextMate (`mate`) is the default `$EDITOR`. Enable its CLI: open TextMate once, then TextMate → Settings → Terminal → Install Shell Support.
 
 ## Full documentation
 

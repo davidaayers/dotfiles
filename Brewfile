@@ -1,6 +1,5 @@
-# Install Cask for managing gui programs
+# Command-line tools
 brew "git"
-brew "cask"
 brew "zsh-syntax-highlighting"
 brew "zsh-history-substring-search"
 

@@ -16,7 +16,7 @@ export LESS="R"
 
 alias gs='git status -sb'
 alias gfo="git fetch origin"
-alias gprune='git remote prune origin && git branch --merged | grep -v "\*" | xargs -n 1 git branch -d'
+alias gprune='git remote prune origin && git branch --merged | grep -v "\*" | grep -vE "^  (main|master)$" | xargs -n 1 git branch -d'
 
 __git_files () { 
     _wanted files expl 'local files' _files 
@@ -76,13 +76,17 @@ alias tab-chroma="$HOME/.config/tab-chroma/tab-chroma.sh"
 # tab-chroma: reset tab on claude exit
 claude() {
   command claude "$@"
+  local rc=$?
   tab-chroma reset > /dev/null 2>&1
+  return $rc
 }
 
 # tab-chroma: reset tab on opencode exit
 opencode() {
   command opencode "$@"
+  local rc=$?
   tab-chroma reset > /dev/null 2>&1
+  return $rc
 }
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
