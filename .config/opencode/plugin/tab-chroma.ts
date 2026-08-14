@@ -90,12 +90,24 @@ function truncate(s: string, max: number): string {
   return s.slice(0, max - 1) + "…"
 }
 
+// Reduce a shell command to a short, readable summary: strip leading
+// cd/pushd chains, collapse whitespace, and keep the primary command.
+function cleanCommand(cmd: string): string {
+  let c = cmd.replace(/\s+/g, " ").trim()
+  while (/^(?:cd|pushd)\s+[^\s&;|]+\s*(?:&&|;)/.test(c)) {
+    c = c.replace(/^(?:cd|pushd)\s+[^\s&;|]+\s*(?:&&|;)\s*/, "")
+  }
+  return c.split(/\s*(?:&&|\|\||;|\|)\s*/)[0]
+}
+
 function describeTool(tool: string, input: any): string {
   const i = input && typeof input === "object" ? input : {}
   const str = (v: any) => (typeof v === "string" ? v : "")
   switch (tool) {
-    case "bash":
-      return str(i.command) ? `bash ${truncate(str(i.command), 40)}` : "bash"
+    case "bash": {
+      const cmd = cleanCommand(str(i.command))
+      return cmd ? truncate(cmd, 28) : "running command"
+    }
     case "read":
       return str(i.filePath) ? `reading ${basename(str(i.filePath))}` : "reading"
     case "edit":
