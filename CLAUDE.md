@@ -42,7 +42,7 @@ Full install/setup docs live in `README.md` (canonical).
 
 - `bin/dfm install` symlinks all files from this repo into `$HOME`, preserving directory structure
 - `.dfminstall` controls exceptions: `skip` entries are **not** symlinked
-  (`README.md` and `Brewfile`), `recurse` entries are recursed into so only
+  (`README.md`, `Brewfile`, `CLAUDE.md`), `recurse` entries are recursed into so only
   their contents get symlinked (`.config`, `.oh-my-zsh`)
 - After adding a new dotfile here, re-run `bin/dfm install` to create its symlink
 
@@ -64,6 +64,8 @@ Full install/setup docs live in `README.md` (canonical).
 - `$EDITOR` is TextMate (`mate -w`); enable its CLI via TextMate → Settings → Terminal → Install Shell Support
 - History search: `zsh-history-substring-search` bound to arrow keys
 - Syntax highlighting: `zsh-syntax-highlighting` (both installed via Homebrew)
-- `tab-chroma` (iTerm2 tab color plugin for Claude Code) is vendored under
-  `.config/tab-chroma/`. Its `config.json` is gitignored because the script
-  rewrites it on theme/feature toggles; `ensure_config()` regenerates defaults.
+- `tab-chroma` (iTerm2 tab color/title feedback for Claude Code and opencode) is
+  vendored under `.config/tab-chroma/`. Its `config.json` is gitignored because
+  the script rewrites it on theme/feature toggles; `ensure_config()` regenerates
+  defaults. The opencode title logic lives in
+  `.config/opencode/plugin/tab-chroma.ts` (see README for details).

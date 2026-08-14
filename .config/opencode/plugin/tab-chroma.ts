@@ -9,7 +9,7 @@
 //
 // The tab *title* is handled here instead of by the vendored script: opencode
 // exposes richer per-event data (the active tool and its arguments), so the
-// title can show what's actually happening ("bash npm test", "reading foo.ts")
+// title can show what's actually happening ("npm test", "reading foo.ts")
 // rather than the script's static "working". Keeping this logic in the plugin
 // means the vendored script stays untouched — and safe from `tab-chroma update`.
 
@@ -192,7 +192,6 @@ export default async ({ directory, client }: { directory: string; client: any })
     lastTitle = title
     try {
       writeFileSync(resolveDevice(), `\x1b]0;${title}\x07`)
-      log("info", "title", { title })
     } catch (e) {
       log("error", "title write failed", { error: String(e) })
     }
@@ -246,14 +245,12 @@ export default async ({ directory, client }: { directory: string; client: any })
           const info = props.info ?? {}
           const cwd = info.directory || directory
           sessions.set(info.id, { cwd, activity: null, phase: "start" })
-          log("info", "event", { type: "session.created", id: info.id, cwd })
           await emit("SessionStart", info.id, cwd)
           updateTitle(info.id)
           break
         }
         case "session.status": {
           const sid = props.sessionID
-          log("info", "event", { type: "session.status", status: props.status?.type, sid })
           if (props.status?.type === "busy") {
             setPhase(sid, "working")
             await emit("PreToolUse", sid, cwdFor(sid))
@@ -266,7 +263,6 @@ export default async ({ directory, client }: { directory: string; client: any })
         }
         case "session.idle": {
           const sid = props.sessionID
-          log("info", "event", { type: "session.idle", sid })
           setActivity(sid, null)
           setPhase(sid, "done")
           await emit("Stop", sid, cwdFor(sid))
@@ -280,7 +276,6 @@ export default async ({ directory, client }: { directory: string; client: any })
           if (part.type === "tool") {
             setPhase(sid, "working")
             setActivity(sid, describeTool(part.tool, part.state?.input))
-            log("info", "event", { type: "tool", tool: part.tool, sid })
             updateTitle(sid)
           } else if (part.type === "text" || part.type === "reasoning") {
             if (phaseOf(sid) === "working") {

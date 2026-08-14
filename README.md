@@ -64,8 +64,9 @@ in `.zshrc` resets the tab on exit (Claude Code has no exit hook).
 subscribes to opencode's plugin event bus and pipes the same JSON the script
 expects into `~/.config/tab-chroma/tab-chroma.sh`. The `opencode()` wrapper in
 `.zshrc` resets the tab on exit. The plugin is registered in `opencode.jsonc`
-via `"plugin": ["./plugin/tab-chroma.ts"]` and has no npm dependencies, so a
-fresh clone needs no `npm install`.
+via `"plugin": ["./plugin/tab-chroma.ts"]`. It only imports Node builtins at
+runtime, so a fresh clone needs no `npm install` to run it (the
+`@opencode-ai/plugin` entry in `package.json` exists only for type-checking).
 
 Color/badge mapping for opencode (unchanged — handled by the vendored script):
 
@@ -79,7 +80,7 @@ Color/badge mapping for opencode (unchanged — handled by the vendored script):
 The tab **title** is driven by the plugin rather than the vendored script, so
 it can show what opencode is actually doing instead of a static "working".
 It subscribes to `message.part.updated` to read the active tool and its
-arguments, producing titles like `◉ myapp · bash npm test`,
+arguments, producing titles like `◉ myapp · npm test`,
 `◉ myapp · reading foo.ts`, `◉ myapp · thinking`, and `◉ myapp · done`. This
 keeps `tab-chroma.sh` pristine — `tab-chroma update` won't clobber the title
 logic — at the cost of a small duplicated device-resolution/title-write helper
