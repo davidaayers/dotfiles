@@ -67,7 +67,7 @@ expects into `~/.config/tab-chroma/tab-chroma.sh`. The `opencode()` wrapper in
 via `"plugin": ["./plugin/tab-chroma.ts"]` and has no npm dependencies, so a
 fresh clone needs no `npm install`.
 
-Event mapping for opencode:
+Color/badge mapping for opencode (unchanged — handled by the vendored script):
 
 | opencode event | tab-chroma state |
 | -------------- | ---------------- |
@@ -75,6 +75,15 @@ Event mapping for opencode:
 | `session.status` (busy) | `working` |
 | `session.idle` | `done` |
 | `permission.ask` | `permission` |
+
+The tab **title** is driven by the plugin rather than the vendored script, so
+it can show what opencode is actually doing instead of a static "working".
+It subscribes to `message.part.updated` to read the active tool and its
+arguments, producing titles like `◉ myapp · bash npm test`,
+`◉ myapp · reading foo.ts`, `◉ myapp · thinking`, and `◉ myapp · done`. This
+keeps `tab-chroma.sh` pristine — `tab-chroma update` won't clobber the title
+logic — at the cost of a small duplicated device-resolution/title-write helper
+in the plugin.
 
 Notes:
 
