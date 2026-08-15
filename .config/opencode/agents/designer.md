@@ -1,5 +1,5 @@
 ---
-description: UI/UX design, review, and implementation. Use for styling, responsive design, component architecture and visual polish.
+description: UI/UX design and implementation. Use for styling, responsive design, component architecture and visual polish.
 mode: subagent
 model: opencode-go/kimi-k2.7-code
 temperature: 0.7
