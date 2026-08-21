@@ -1,7 +1,8 @@
 ---
 description: Reviewer for non-visual OpenSpec changes — backend, core logic, and online services. Checks correctness, layer boundaries, invariants, security, local-first behavior, and spec quality. Use after a change's proposal and specs are drafted, to fold recommendations in before implementation.
 mode: subagent
-model: opencode-go/kimi-k2.7-code
+model: opencode-go/kimi-k3
+variant: max
 permission:
   edit: deny
 ---
@@ -28,7 +29,9 @@ visual, UI-presentation, or doc-only.
   failure, and anything it points to a spec for as owned by that spec.
 - The settled specs that own the change's behavior: `openspec/specs/<capability>/spec.md`
   for every capability the change touches.
-- Any `docs/adr/` records for the rationale behind boundary decisions the change touches.
+- Architectural decision records in the location identified by the project's
+  `AGENTS.md` or OpenSpec configuration (for example, `docs/adr/` or
+  `docs/decisions/`).
 
 # What you check
 

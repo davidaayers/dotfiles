@@ -1,8 +1,8 @@
 ---
 description: Reviews implementation diffs for bugs, coupling, code quality, tests, and spec conformance. Use for the post-apply code-review stage of an OpenSpec change.
 mode: subagent
-model: opencode-go/kimi-k2.7-code
-temperature: 0.1
+model: opencode-go/glm-5.3
+variant: max
 permission:
   edit: deny
   bash:

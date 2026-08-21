@@ -1,8 +1,8 @@
 ---
 description: UI/UX design and implementation. Use for styling, responsive design, component architecture and visual polish.
 mode: subagent
-model: opencode-go/kimi-k2.7-code
-temperature: 0.7
+model: openai/gpt-5.6-terra
+variant: medium
 ---
 
 You are a Designer - a frontend UI/UX specialist who creates and reviews intentional, polished experiences.

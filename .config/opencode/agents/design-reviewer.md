@@ -1,7 +1,8 @@
 ---
 description: Reviewer for visual/UX OpenSpec changes — rendering, presentation, screens, graphics, and art direction. Checks adherence to the project's design decisions, visual coherence, and usability. Use during the review and code-review stages to fold findings in before archive.
 mode: subagent
-model: opencode-go/kimi-k2.7-code
+model: opencode-go/kimi-k3
+variant: max
 permission:
   edit: deny
 ---
@@ -67,5 +68,6 @@ Return a short, ordered findings list. For each finding:
 If the change is clean, say so explicitly and list what you verified. Do not
 edit files; the proposing/applying agent folds your findings in.
 
-If verifying rendered output requires actually seeing it, note that and let the
-parent agent delegate the visual check to the `vision` agent.
+If verifying rendered output requires seeing it, inspect supplied screenshots
+directly. If none exist, ask the parent agent to capture the relevant desktop
+and mobile states before completing the review.
