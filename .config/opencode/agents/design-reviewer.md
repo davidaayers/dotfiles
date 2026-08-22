@@ -1,7 +1,7 @@
 ---
 description: Reviewer for visual/UX OpenSpec changes — rendering, presentation, screens, graphics, and art direction. Checks adherence to the project's design decisions, visual coherence, and usability. Use during the review and code-review stages to fold findings in before archive.
 mode: subagent
-model: opencode-go/kimi-k3
+model: opencode-go/glm-5.3
 variant: max
 permission:
   edit: deny

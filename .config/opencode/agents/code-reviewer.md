@@ -92,7 +92,6 @@ Don't be a zealot about style:
 ## Tools
 
 Use these to inform your review:
-- The `explore` subagent — find how existing code handles similar problems.
 - Read/grep/glob — verify full-file context and cross-references.
 - Web search/fetch — verify library/API usage before flagging something wrong.
 
