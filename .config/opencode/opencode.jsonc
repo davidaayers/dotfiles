@@ -14,6 +14,14 @@
     }
   },
   "plugin": ["./plugin/tab-chroma.ts"],
+  "mcp": {
+    "vestige": {
+      "type": "local",
+      "command": ["npx", "-y", "-p", "vestige-mcp-server@2.3.0", "vestige-mcp"],
+      "enabled": true,
+      "timeout": 60000
+    }
+  },
   "lsp": {
     "gdscript": {
       "command": [
