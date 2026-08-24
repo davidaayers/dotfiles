@@ -22,10 +22,15 @@
       "timeout": 60000
     }
   },
+  // gdscript LSP: bridge needs --project pointing at game/ (project.godot is not
+  // at the repo root and the bridge only searches upward). Port is derived from
+  // the checkout path so main repo and worktrees don't collide on 6005.
   "lsp": {
     "gdscript": {
       "command": [
-        "godot-lsp-bridge"
+        "sh",
+        "-c",
+        "B=$(command -v godot-lsp-bridge || true); [ -n \"$B\" ] || B=$(ls \"$HOME\"/.local/share/fnm/node-versions/*/installation/bin/godot-lsp-bridge 2>/dev/null | tail -1); D=$(/bin/pwd -P); if [ -f \"$D/game/project.godot\" ]; then exec \"$B\" --project \"$D/game\" --port \"$((6005 + $(printf %s \"$D\" | cksum | awk '{print $1}') % 1000))\"; else exec \"$B\"; fi"
       ],
       "extensions": [
         ".gd",
