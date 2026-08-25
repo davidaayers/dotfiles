@@ -47,7 +47,11 @@
       "*": "ask",
       "/tmp/**": "allow",
       "/private/tmp/**": "allow",
-      "/var/folders/**": "allow"
+      "/var/folders/**": "allow",
+      // local Godot reference clones (engine source @ 4.7.1-stable, docs, demos)
+      "~/development/godot/**": "allow",
+      "~/development/godot-docs/**": "allow",
+      "~/development/godot-demo-projects/**": "allow"
     }
   },
   "provider": {

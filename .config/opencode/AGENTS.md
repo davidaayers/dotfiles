@@ -1,5 +1,9 @@
 # Global Rules
 
+## Search Tool
+
+Always prefer `rg` (ripgrep) over `grep`, `find`, and `ls` when searching files or listing matches via Bash — it is faster and respects `.gitignore` by default. The dedicated Grep tool may still be used for simple content searches, but any shell-level searching must use `rg`.
+
 ## Todo List Currency
 
 Primary agents must keep the visible todo list current: call `todowrite` as soon as the plan is clear, and update it after each task or checkpoint — not just at setup and completion. Frequent, small updates are the norm; batch them only when a stretch of work is genuinely one unit. Subagents are exempt unless they have `todowrite` permission.
