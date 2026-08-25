@@ -3,6 +3,7 @@
   "plugin": [
     "file:///Users/david/development/opencode-codex-usage-plugin/dist/tui.js",
     "opencode-subagents-view",
-    "file:///Users/david/development/opencode-context-tui-plugin/src/context-gauge.tsx"
+    "file:///Users/david/development/opencode-context-tui-plugin/src/context-gauge.tsx",
+    "file:///Users/david/development/opencode-go-usage-plugin/src/go-usage.tsx"
   ]
 }
