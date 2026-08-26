@@ -94,3 +94,5 @@ eval "$(pyenv init -)"
 
 # opencode
 export PATH="$HOME/.opencode/bin:$PATH"
+
+ANTHROPIC_MODEL="claude-sonnet-4-6"
