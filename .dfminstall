@@ -3,3 +3,4 @@ Brewfile skip
 CLAUDE.md skip
 .config recurse
 .oh-my-zsh recurse
+.claude recurse

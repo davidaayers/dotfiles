@@ -1,0 +1,114 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(*)",
+      "Bash(agent-browser *)",
+      "mcp__claude_ai_Atlassian__getConfluencePage",
+      "Bash(python3)",
+      "WebSearch",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "mcp__claude_ai_Atlassian__getAccessibleAtlassianResources",
+      "mcp__claude_ai_Atlassian__fetch",
+      "mcp__claude_ai_Atlassian__searchConfluenceUsingCql",
+      "mcp__claude_ai_Atlassian__createJiraIssue",
+      "mcp__claude_ai_Atlassian__transitionJiraIssue",
+      "mcp__claude_ai_Atlassian__addCommentToJiraIssue",
+      "mcp__claude_ai_Atlassian__editJiraIssue",
+      "mcp__claude_ai_Atlassian__atlassianUserInfo",
+      "mcp__claude_ai_Atlassian__lookupJiraAccountId",
+      "Bash(git branch *)",
+      "Bash(git reset *)",
+      "Bash(python3 -c ' *)",
+      "Bash(git show-branch *)"
+    ],
+    "defaultMode": "auto"
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.config/tab-chroma/tab-chroma.sh"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.config/tab-chroma/tab-chroma.sh"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.config/tab-chroma/tab-chroma.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.config/tab-chroma/tab-chroma.sh"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.config/tab-chroma/tab-chroma.sh"
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.config/tab-chroma/tab-chroma.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "ccstatusline",
+    "padding": 0,
+    "refreshInterval": 10
+  },
+  "enabledPlugins": {
+    "swift-lsp@claude-plugins-official": false,
+    "proofread@invitation-homes": true,
+    "ospj@invitation-homes": true,
+    "skill-creator@claude-plugins-official": true,
+    "backlog-review@invitation-homes": true
+  },
+  "effortLevel": "medium",
+  "tui": "fullscreen",
+  "skipWorkflowUsageWarning": true,
+  "skipAutoPermissionPrompt": true,
+  "model": "claude-sonnet-4-6"
+}
