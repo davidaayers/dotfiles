@@ -28,6 +28,9 @@ validation evidence, and review questions. Review only this scope.
 
 # Scope
 
+- Keep the review to at most 5 repository-inspection tool calls and roughly 2
+  minutes. If the budget is exhausted, return the findings already supported by
+  evidence and identify only the remaining validation gap.
 - Inspect every changed hunk and its enclosing unit.
 - Do not read entire files, neighboring subsystems, history, unrelated specs, or
   transitive consumers unless a concrete defect cannot be verified otherwise.
@@ -37,6 +40,11 @@ validation evidence, and review questions. Review only this scope.
 - Escalate directly to `code-reviewer-deep` for public contracts, persistence,
   trust or security boundaries, concurrency, distributed state, shared
   abstractions, multiple boundaries, difficult rollback, or uncertain ownership.
+- Report at most 5 material findings. Exclude style advice, speculative
+  hardening, and unrelated pre-existing issues.
+- If verification requires reading beyond the supplied scope, return `Scope
+  expansion requested` with the suspected defect and required path instead of
+  exploring it.
 
 # Checklist
 

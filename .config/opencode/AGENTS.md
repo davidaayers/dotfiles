@@ -60,11 +60,19 @@ implementation entry points, direct consumers, invariants, non-goals, completed
 validation, and specific questions. For full reviews, also include suspected
 transitive consumers and affected boundaries.
 
+Partition changed files in the prompt as behavior-critical, consistency-only,
+or mechanical. Review depth follows the behavior-critical slice, not aggregate
+file count. Review source once; generated or installed copies are consistency
+evidence, not separate review targets.
+
 Code review verifies implementation correctness and conformance; it does not
 repeat the approved architecture review. Reviewers may expand scope to verify a
-concrete concern, but must not perform unbounded repository review by default.
-Resume the same review task for corrections and send only the corrective diff
-plus unresolved finding IDs unless behavior or boundaries changed.
+concrete concern, but must request scope expansion before leaving named
+consumers and must not perform unbounded repository review. Use one external
+review pass by default. Resume the same review task only when a material finding
+remains unresolved; corrections directly covered by focused tests and primary
+inspection do not require another reviewer pass. When resuming, send only the
+corrective diff plus unresolved finding IDs unless behavior or boundaries changed.
 
 ## Design Review Protocol
 
