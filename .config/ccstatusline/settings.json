@@ -1,0 +1,66 @@
+{
+  "version": 3,
+  "lines": [
+    [
+      {
+        "id": "ccusage-daily-cost",
+        "type": "custom-command",
+        "commandPath": "/Users/david.ayers/.claude/hooks/ccusage-statusline.sh",
+        "timeout": 5000,
+        "preserveColors": true
+      },
+      {
+        "id": "a2e500dc-ba20-48b0-a54e-1b0bfe4d746a",
+        "type": "separator"
+      },
+      {
+        "id": "65c5f7e2-9151-4491-84e4-385291031efe",
+        "type": "current-working-dir",
+        "rawValue": true
+      },
+      {
+        "id": "c41595e4-13ac-43f0-828d-881e13c3238c",
+        "type": "separator"
+      },
+      {
+        "id": "50e24859-d4f4-4436-959d-8b34341c38b0",
+        "type": "git-branch"
+      },
+      {
+        "id": "245fde2b-fc8d-4a85-bad1-9f2e09dace95",
+        "type": "separator"
+      },
+      {
+        "id": "7",
+        "type": "git-changes",
+        "color": "yellow"
+      }
+    ],
+    [],
+    []
+  ],
+  "flexMode": "full-minus-40",
+  "compactThreshold": 60,
+  "colorLevel": 2,
+  "inheritSeparatorColors": false,
+  "globalBold": false,
+  "gitCacheTtlSeconds": 5,
+  "minimalistMode": false,
+  "powerline": {
+    "enabled": false,
+    "separators": [
+      ""
+    ],
+    "separatorInvertBackground": [
+      false
+    ],
+    "startCaps": [],
+    "endCaps": [],
+    "autoAlign": false,
+    "continueThemeAcrossLines": false
+  },
+  "installation": {
+    "method": "pinned",
+    "installedVersion": "2.2.19"
+  }
+}
