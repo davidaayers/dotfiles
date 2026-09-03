@@ -17,91 +17,15 @@ Use the `vestige_*` MCP tools for cross-session memory:
 - Before non-obvious choices, call `vestige_recall` to check for prior decisions — never contradict a stored decision silently; surface it instead.
 - Keep ingests selective: durable project/user facts only, not transient session state.
 
-## Architecture Review Protocol
+## Review Policy
 
-Before invoking an architecture reviewer, classify the change by behavioral
-risk rather than diff size:
+Follow the active project's review and validation workflow when one exists. The
+project workflow owns review timing, evidence, reviewer selection, and scope; do
+not add reviews during intermediate work unless that workflow or the user
+explicitly requires one.
 
-- `targeted`: metadata, fixtures, isolated tests, narrowly scoped documentation,
-  or mechanical changes.
-- `standard`: localized behavior within one known architectural boundary.
-- `full`: public contracts, persistence or migrations, authentication or trust,
-  concurrency, distributed state, external-service resilience, shared
-  abstractions, multiple boundaries, difficult rollback, or uncertain ownership.
-
-Use `architecture-reviewer` for targeted and standard reviews. Use
-`architecture-reviewer-deep` for full reviews or when the standard reviewer
-escalates.
-
-Every review prompt must include the review mode, change path, affected
-capabilities, implementation entry points, direct consumers, invariants,
-non-goals, completed validation, and specific questions to answer. The reviewer
-may expand scope when evidence requires it, but the prompt must not request an
-unbounded repository review by default.
-
-Architecture review is pre-implementation. Use the matching code reviewer for
-the post-implementation diff and `design-reviewer` for visual or UX concerns. Skip
-architecture review for purely editorial documentation. Resume the same review
-task for corrections and send only the artifact delta plus unresolved finding
-IDs unless the correction changes scope or assumptions.
-
-## Code Review Protocol
-
-Apply the same behavioral-risk classification after implementation:
-
-- Use `code-reviewer-targeted` for targeted diffs.
-- Use `code-reviewer` for standard diffs.
-- Use `code-reviewer-deep` for full-risk diffs or when another reviewer
-  escalates.
-
-Every code-review prompt must include the exact diff or commit range, changed
-files, behavioral delta, relevant requirements and design decisions,
-implementation entry points, direct consumers, invariants, non-goals, completed
-validation, and specific questions. For full reviews, also include suspected
-transitive consumers and affected boundaries.
-
-Partition changed files in the prompt as behavior-critical, consistency-only,
-or mechanical. Review depth follows the behavior-critical slice, not aggregate
-file count. Review source once; generated or installed copies are consistency
-evidence, not separate review targets.
-
-Code review verifies implementation correctness and conformance; it does not
-repeat the approved architecture review. Reviewers may expand scope to verify a
-concrete concern, but must request scope expansion before leaving named
-consumers and must not perform unbounded repository review. Use one external
-review pass by default. Resume the same review task only when a material finding
-remains unresolved; corrections directly covered by focused tests and primary
-inspection do not require another reviewer pass. When resuming, send only the
-corrective diff plus unresolved finding IDs unless behavior or boundaries changed.
-
-## Design Review Protocol
-
-Classify visual and UX changes by affected design risk:
-
-- `targeted`: isolated copy, icon, color, spacing, visual-state, or
-  single-component changes.
-- `standard`: one component or screen with multiple states, responsive behavior,
-  or a localized interaction flow.
-- `full`: shared design systems or primitives, information architecture,
-  navigation, multi-screen workflows, accessibility-critical interactions,
-  responsive systems, multiple input modalities, cross-platform presentation,
-  rendering pipelines, or uncertain visual ownership.
-
-Use `design-reviewer` for targeted and standard reviews. Use
-`design-reviewer-deep` for full reviews or when the standard reviewer escalates.
-
-Every design-review prompt must include the stage (`specification` or
-`implementation`), review mode, named surfaces, user tasks and states, required
-viewports and platforms, input modalities, governing design decisions,
-accessibility constraints, invariants, non-goals, completed validation, and
-specific questions. Implementation reviews must include the exact visual diff
-and rendered evidence for required states and viewports.
-
-Design review does not repeat architecture or code review. At the specification
-stage, review artifacts rather than implementation. At the implementation stage,
-verify parity with the approved design and supplied rendered evidence rather
-than repeating the full specification review. If required visual evidence is
-missing, report the gap instead of launching independent browser exploration.
-Resume the same review task for corrections and send only changed artifacts,
-rendered evidence, and unresolved finding IDs unless the visual system or user
-flow changed.
+Outside a project-defined workflow, review only a completed reviewable change.
+Use one bounded pass, start with the standard reviewer, and escalate only for a
+concrete unresolved risk that the standard review cannot verify within scope.
+Keep review limited to changed behavior and named direct consumers. Do not ask
+for speculative hardening, alternative architecture, or repository-wide audit.
