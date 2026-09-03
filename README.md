@@ -55,8 +55,8 @@ The script has two parts: a terminal-facing engine (themes, config, debounce,
 iTerm2 escape sequences) and event wiring. The engine is shared; each agent
 wires it up its own way.
 
-**Claude Code** — registers shell hooks in `~/.claude/settings.json` (not part
-of this repo) that call `tab-chroma.sh` on `SessionStart`/`UserPromptSubmit`/
+**Claude Code** — registers shell hooks in `~/.claude/settings.json` (tracked
+in this repo) that call `tab-chroma.sh` on `SessionStart`/`UserPromptSubmit`/
 `PreToolUse`/`Stop`/`Notification`/`PermissionRequest`. The `claude()` wrapper
 in `.zshrc` resets the tab on exit (Claude Code has no exit hook).
 
@@ -93,6 +93,34 @@ Notes:
 * After changing `opencode.jsonc` or the plugin, restart opencode — its config
   is loaded once at startup and not hot-reloaded.
 * After changing `.zshrc`, run `source ~/.zshrc` or open a new shell.
+
+## Claude Code
+
+The following Claude Code config is tracked in this repo and symlinked by `dfm install`:
+
+| Path | What it is |
+|------|------------|
+| `~/.claude/settings.json` | Permissions, hooks, plugins, model, status line config |
+| `~/.claude/CLAUDE.md` | Global instructions (Jira/Git rules) |
+| `~/.claude/commands/` | Custom slash commands (badge-on/off, tab-chroma) |
+| `~/.claude/hooks/ccusage-statusline.sh` | Custom status line script |
+| `~/.claude/skills/agent-browser/` | Browser automation skill |
+| `~/.claude/skills/david-voice/` | Writing voice skill |
+| `~/.config/ccstatusline/settings.json` | Status line layout config |
+
+### Post-install steps
+
+**Install ccusage** (powers the status line):
+
+```
+npm install -g ccusage
+```
+
+**Re-authenticate marketplace plugins** — plugins are auth'd per-machine. After first launch, Claude Code will prompt you to authenticate:
+- `proofread@invitation-homes`
+- `ospj@invitation-homes`
+- `backlog-review@invitation-homes`
+- `skill-creator@claude-plugins-official`
 
 ## Alfred Setup
 
