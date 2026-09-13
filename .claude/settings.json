@@ -25,6 +25,7 @@
     ],
     "defaultMode": "auto"
   },
+  "model": "claude-sonnet-4-6",
   "hooks": {
     "SessionStart": [
       {
@@ -104,11 +105,11 @@
     "proofread@invitation-homes": true,
     "ospj@invitation-homes": true,
     "skill-creator@claude-plugins-official": true,
-    "backlog-review@invitation-homes": true
+    "backlog-review@invitation-homes": true,
+    "ih-brand@invitation-homes": true
   },
   "effortLevel": "medium",
   "tui": "fullscreen",
   "skipWorkflowUsageWarning": true,
-  "theme": "dark",
   "skipAutoPermissionPrompt": true
 }
