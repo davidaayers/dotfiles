@@ -1,9 +1,12 @@
 {
   "$schema": "https://opencode.ai/tui.json",
   "plugin": [
-    "opencode-subagents-view",
-    "file:///Users/david/development/opencode-go-usage-plugin/src/go-usage.tsx",
-    "@davidaayers/opencode-codex-usage-plugin",
-    "@davidaayers/opencode-context-gauge-plugin"
-  ]
+    "@davidaayers/opencode-codex-usage-plugin@0.1.1",
+    "opencode-subagents-view@0.3.0",
+    "@davidaayers/opencode-context-gauge-plugin@0.1.6",
+    "@davidaayers/opencode-go-usage-plugin@0.1.2"
+  ],
+  "plugin_enabled": {
+    "context-gauge": true
+  }
 }
