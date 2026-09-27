@@ -39,9 +39,9 @@ The `Brewfile` included in the .dotfiles directory uses [brew bundle](https://gi
 
 `brew bundle`
 
-Node is managed with [Volta](https://volta.sh/) (installed separately, not via Brewfile).
+Python is managed with [pyenv](https://github.com/pyenv/pyenv) (now installed with Brewfile).
 
-Python is managed with [pyenv](https://github.com/pyenv/pyenv) (installed separately, not via Brewfile).
+Node is managed with [Volta](https://volta.sh/) (installed separately, not via Brewfile).
 
 ## tab-chroma (iTerm2 tab colors)
 
