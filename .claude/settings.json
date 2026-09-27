@@ -109,6 +109,6 @@
   "effortLevel": "medium",
   "tui": "fullscreen",
   "skipWorkflowUsageWarning": true,
-  "skipAutoPermissionPrompt": true,
-  "model": "claude-sonnet-4-6"
+  "theme": "dark",
+  "skipAutoPermissionPrompt": true
 }
