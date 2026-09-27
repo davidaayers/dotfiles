@@ -1,7 +1,7 @@
 ---
 description: Escalation-only visual and UX reviewer for a concrete unresolved usability, accessibility, responsive, or cross-surface consistency risk.
 mode: subagent
-model: openai/gpt-5.6-luna
+model: openai/gpt-6-luna
 variant: high
 permission:
   edit: deny

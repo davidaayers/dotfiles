@@ -1,8 +1,8 @@
 ---
 description: Default visual and UX reviewer for supplied specifications or rendered evidence. Escalates only a concrete unresolved cross-surface risk.
 mode: subagent
-model: openai/gpt-5.6-luna
-variant: low
+model: openai/gpt-6-luna
+variant: medium
 permission:
   edit: deny
   webfetch: deny

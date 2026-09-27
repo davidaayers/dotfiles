@@ -1,7 +1,7 @@
 ---
 description: Escalation-only implementation reviewer for a concrete unresolved correctness, data-loss, security, concurrency, or public-contract risk.
 mode: subagent
-model: openai/gpt-5.6-luna
+model: openai/gpt-6-luna
 variant: max
 permission:
   edit: deny

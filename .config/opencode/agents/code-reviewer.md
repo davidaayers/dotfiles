@@ -1,7 +1,7 @@
 ---
 description: Default implementation reviewer for completed behavioral changes. Reviews exact diffs for material bugs and conformance; escalates only a concrete unresolved risk.
 mode: subagent
-model: openai/gpt-5.6-luna
+model: openai/gpt-6-luna
 variant: medium
 permission:
   edit: deny

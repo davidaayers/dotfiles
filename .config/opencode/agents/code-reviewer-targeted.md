@@ -1,7 +1,7 @@
 ---
 description: Fast reviewer for metadata, fixtures, isolated tests, documentation, and mechanical diffs. Escalates behavior changes to the standard reviewer.
 mode: subagent
-model: openai/gpt-5.6-luna
+model: openai/gpt-6-luna
 variant: low
 permission:
   edit: deny

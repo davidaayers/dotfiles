@@ -1,7 +1,7 @@
 ---
 description: Default non-visual OpenSpec planning reviewer. Checks material correctness, boundaries, invariants, and spec quality; escalates only a concrete unresolved risk.
 mode: subagent
-model: openai/gpt-5.6-luna
+model: openai/gpt-6-luna
 variant: high
 permission:
   edit: deny
