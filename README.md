@@ -125,10 +125,11 @@ The following Claude Code config is tracked in this repo and symlinked by `dfm i
 
 ### Post-install steps
 
-**Install ccusage** (powers the status line):
+**Install ccusage and ccstatusline** (power the status line):
 
 ```
 npm install -g ccusage
+npm install -g ccstatusline
 ```
 
 **Re-authenticate marketplace plugins** — plugins are auth'd per-machine. After first launch, Claude Code will prompt you to authenticate:
