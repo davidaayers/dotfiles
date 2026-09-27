@@ -33,6 +33,21 @@ Secrets and identity are kept out of the repo. Create these locally:
   work-specific `core.hooksPath` if you use the Invitation Homes
   `git-shared-hooks` checkout at `~/git-shared-hooks`.
 
+## Set up Git on a new machine
+
+After `dfm install` symlinks `.gitconfig` into your home directory, create
+`~/.gitconfig.local` with your name and email address:
+
+```gitconfig
+[user]
+    name = Your Name
+    email = you@example.com
+```
+
+The tracked `.gitconfig` includes this local file, so Git uses that identity
+without committing your personal details to the dotfiles repo. Check it with
+`git config --global user.name` and `git config --global user.email`.
+
 ## Setup Programs
 
 The `Brewfile` included in the .dotfiles directory uses [brew bundle](https://github.com/Homebrew/homebrew-bundle) to setup every program in that file with one simple command:
@@ -136,4 +151,3 @@ npm install -g ccusage
 For more information, check out the [wiki](http://github.com/justone/dotfiles/wiki).
 
 You can also run <tt>dfm --help</tt>.
-
