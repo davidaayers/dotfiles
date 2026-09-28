@@ -1,7 +1,7 @@
 {
   "$schema": "https://opencode.ai/tui.json",
   "plugin": [
-    "@davidaayers/opencode-codex-usage-plugin@0.1.1",
+    "@davidaayers/opencode-codex-usage-plugin@0.1.2",
     "opencode-subagents-view@0.3.0",
     "@davidaayers/opencode-context-gauge-plugin@0.1.8",
     "@davidaayers/opencode-go-usage-plugin@0.1.2"
