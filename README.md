@@ -29,9 +29,6 @@ Secrets and identity are kept out of the repo. Create these locally:
 * `~/.zshrc.local` (sourced by `.zshrc`) — exports tokens read from `~/.config/secrets/`:
   * `~/.config/secrets/homebrew_api_token` — GitHub PAT (no permissions needed) for Homebrew
   * `~/.config/secrets/npm_token` — NPM token with publish access
-* `~/.gitconfig.local` (included by `.gitconfig`) — git `[user]` identity, and a
-  work-specific `core.hooksPath` if you use the Invitation Homes
-  `git-shared-hooks` checkout at `~/git-shared-hooks`.
 
 ## Set up Git on a new machine
 
@@ -47,12 +44,14 @@ After `dfm install` symlinks `.gitconfig` into your home directory, create
 The tracked `.gitconfig` includes this local file, so Git uses that identity
 without committing your personal details to the dotfiles repo. Check it with
 `git config --global user.name` and `git config --global user.email`.
+If you use the Invitation Homes `git-shared-hooks` checkout at
+`~/git-shared-hooks`, also set `core.hooksPath` in `~/.gitconfig.local`.
 
 ## Setup Programs
 
 The `Brewfile` included in the .dotfiles directory uses [brew bundle](https://github.com/Homebrew/homebrew-bundle) to setup every program in that file with one simple command:
 
-`brew bundle`
+`brew bundle --file ~/.dotfiles/Brewfile`
 
 Python is managed with [pyenv](https://github.com/pyenv/pyenv) (now installed with Brewfile).
 
@@ -132,10 +131,17 @@ npm install -g ccusage
 npm install -g ccstatusline
 ```
 
+**Install the `/util.md-to-clipboard` skill dependency:**
+
+```
+pip3 install pyobjc-framework-Cocoa
+```
+
 **Re-authenticate marketplace plugins** — plugins are auth'd per-machine. After first launch, Claude Code will prompt you to authenticate:
 - `proofread@invitation-homes`
 - `ospj@invitation-homes`
 - `backlog-review@invitation-homes`
+- `ih-brand@invitation-homes`
 - `skill-creator@claude-plugins-official`
 
 ## Alfred Setup

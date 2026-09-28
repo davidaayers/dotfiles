@@ -5,6 +5,7 @@ brew "zsh-history-substring-search"
 brew "pyenv"
 brew "anomalyco/tap/opencode"
 brew "gh"
+brew "pandoc"
 
 # Needed for Alfred Github workflow
 brew "php"
