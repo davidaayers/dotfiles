@@ -1,7 +1,7 @@
 ---
 description: UI/UX design implementation specialist. Use for building or refining named visual surfaces, responsive layouts, interaction states, component styling, and visual polish from supplied requirements or approved designs.
 mode: subagent
-model: openai/gpt-5.6-terra
+model: openai/gpt-6.1-sol
 variant: medium
 permission:
   task: deny
