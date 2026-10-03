@@ -13,7 +13,7 @@
       "variant": "max"
     }
   },
-  "plugin": ["./plugin/tab-chroma.ts"],
+  "plugin": ["./plugin/tab-chroma.ts", "./plugin/todo-nudge.ts"],
   // gdscript LSP: bridge needs --project pointing at game/ (project.godot is not
   // at the repo root and the bridge only searches upward). Port is derived from
   // the checkout path so main repo and worktrees don't collide on 6005.

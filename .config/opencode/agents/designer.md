@@ -61,9 +61,11 @@ boundary; do not add unsupported platform/input guarantees or restart planning.
 
 # Boundaries
 
-Do not perform independent review, reopen approved direction, browse external
-inspiration, fetch assets, delegate, or modify backend/data/application
-architecture unless explicitly required by the supplied implementation scope.
+Do not delegate or start another planning, review, or closeout lifecycle. The
+primary agent owns consequential decisions, reconciliation, and completion.
+Do not reopen approved direction, browse external inspiration, fetch assets, or
+modify backend/data/application architecture unless explicitly required by the
+supplied implementation scope.
 
 # Output
 

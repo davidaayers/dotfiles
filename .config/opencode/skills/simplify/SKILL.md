@@ -5,6 +5,9 @@ description: Simplifies code for clarity without changing behavior. Use for read
 
 # Code Simplification
 
+Follow the active project's execution, review, and verification policy. This skill
+supplies refactoring guidance, not another development lifecycle.
+
 ## Overview
 
 Simplify code by reducing complexity while preserving exact behavior. The goal is not fewer lines - it's code that is easier to read, understand, modify, and debug. Every simplification must pass a simple test: "Would a new team member understand this faster than the original?"
@@ -64,7 +67,8 @@ Watch for over-simplification:
 
 - Don't inline away names that carry meaning
 - Don't merge unrelated logic into one larger function
-- Don't remove abstractions that serve testability or extensibility
+- Retain abstractions with a demonstrated responsibility; remove unused or
+  pass-through layers when behavior and project architecture remain intact
 - Don't optimize for line count over comprehension
 
 ### 5. Scope to What Changed
@@ -122,16 +126,9 @@ After simplifying, confirm:
 - Project conventions still match
 - No behavior, error handling, or side effects changed
 
-## Guidance for This Repository
-
-- Preserve existing runtime behavior, tests, and hooks
-- Favor explicit names and smaller focused helpers when they improve readability
-- Keep refactors tightly scoped to the task or review feedback
-
 ## Final-state verification
 
 Use a proportionate final-state verification plan for the final diff. Run checks
 required by repository and release instructions; add or repeat evidence only
 when the changed scope or a stated uncertainty warrants it.
-
 
