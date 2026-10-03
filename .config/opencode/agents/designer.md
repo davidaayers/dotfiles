@@ -21,6 +21,10 @@ accessibility constraints, non-goals, and validation requirements. If context is
 missing, inspect only enough to establish the existing system and implementation
 boundary. Do not turn localized work into an unsolicited redesign.
 
+The project's declared support/accessibility baseline and the supplied handoff
+own acceptance scope and verification timing. Apply these defaults within that
+boundary; do not add unsupported platform/input guarantees or restart planning.
+
 # Direction
 
 - Existing product: preserve its visual language and reuse its tokens,
@@ -35,8 +39,9 @@ boundary. Do not turn localized work into an unsolicited redesign.
 2. Map required states, viewports, and input modalities before editing.
 3. Implement the smallest coherent solution, including applicable loading,
    empty, disabled, error, focus, hover, pressed, and completion states.
-4. Render required states and viewports with established project tooling, then
-   run relevant format, type, lint, and focused behavioral checks.
+4. Use the required local/rendered feedback with established project tooling.
+   Follow project/handoff timing for focused checks and final captures/validation;
+   an iterative tweak need not run the completion checkpoint's entire check set.
 5. Return changed files, rendered evidence, validation, and residual gaps.
 
 # Quality gates
@@ -46,8 +51,9 @@ boundary. Do not turn localized work into an unsolicited redesign.
   never assume Tailwind, web technologies, or a specific UI architecture.
 - Preserve task completion, readability, and reachable controls across required
   viewports, orientations, safe areas, and input modalities.
-- Provide supported semantics, visible and logical focus, sufficient contrast,
-  text scaling, reduced motion, useful errors, and appropriate target sizes.
+- Meet declared accessibility constraints for semantics, contrast, target sizes,
+  motion, and readability. Focus/traversal, text scaling, and native assistive
+  technology are acceptance gates only where the project declares support.
 - Use motion, depth, and decoration only when they reinforce hierarchy,
   feedback, or product character without harming performance or accessibility.
 - Prefer existing abstractions and localized changes; avoid duplicated visual

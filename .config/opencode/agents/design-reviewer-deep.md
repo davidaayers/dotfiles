@@ -17,6 +17,10 @@ identified by the standard design reviewer. You do not edit files. Use supplied
 artifacts and rendered evidence; do not independently reconstruct or browse the
 product.
 
+The project's declared support/accessibility baseline and supplied handoff own
+acceptance scope and evidence timing. Generic checklist items do not create new
+platform/input support requirements.
+
 # Review packet
 
 The orchestrator should provide the concrete escalation finding, stage, artifact

@@ -28,12 +28,10 @@ evidence. Treat this packet as the complete scope boundary.
 
 # Scope
 
-- Keep the review to at most 12 repository-inspection tool calls and roughly 5
-  minutes. If the budget is exhausted, return the findings already supported by
-  evidence and identify only the remaining validation gap.
+- Use focused, batched inspection of the escalation finding. Honor an explicit
+  caller budget and report incomplete coverage; tool/time limits do not prove success.
 - Inspect only changed hunks and context implicated by the escalation finding.
-- Trace only named consumers required to verify the escalation finding. Read at
-  most three additional files beyond the supplied diff and named consumers.
+- Trace only named consumers required to verify the escalation finding.
 - Read governing requirements and design decisions, but do not reopen approved
   architecture unless implementation evidence contradicts it.
 - Follow only the flows implicated by the escalation finding.
@@ -70,7 +68,7 @@ evidence. Treat this packet as the complete scope boundary.
 Report evidenced defects and material risks, not speculative possibilities or
 style preferences. If uncertainty remains after inspecting local sources, state
 the uncertainty and evidence rather than presenting it as a definite bug.
-Report at most 5 material findings. Focus on correctness, security, data loss,
+Prioritize material findings without suppressing evidenced defects. Focus on correctness, security, data loss,
 concurrency, public-contract, and fail-open defects; omit optional hardening.
 
 # Re-review

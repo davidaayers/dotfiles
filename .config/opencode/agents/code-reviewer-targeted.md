@@ -28,9 +28,8 @@ and specific suspected risks. Treat it as the scope boundary.
 
 # Scope
 
-- Keep the review to at most 5 repository-inspection tool calls and roughly 2
-  minutes. If the budget is exhausted, return the findings already supported by
-  evidence and identify only the remaining validation gap.
+- Keep inspection focused and use batched reads. Honor an explicit caller budget;
+  report incomplete coverage rather than equating a tool/time limit with success.
 - Inspect every changed hunk and its enclosing unit.
 - Do not read entire files, neighboring subsystems, history, unrelated specs, or
   transitive consumers unless a concrete defect cannot be verified otherwise.
@@ -39,7 +38,7 @@ and specific suspected risks. Treat it as the scope boundary.
   beyond an isolated unit.
 - Never escalate directly to the deep reviewer; the standard reviewer must first
   identify a concrete unresolved risk.
-- Report at most 5 material findings. Exclude style advice, speculative
+- Prioritize material findings without suppressing evidenced defects. Exclude style advice, speculative
   hardening, and unrelated pre-existing issues.
 - If verification requires reading beyond the supplied scope, return `Scope
   expansion requested` with the suspected defect and required path instead of

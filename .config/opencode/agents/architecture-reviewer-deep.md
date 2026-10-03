@@ -26,10 +26,11 @@ evidence. Treat this packet as the complete scope boundary.
 - The supplied artifacts and escalation finding.
 - Applicable project `AGENTS.md` guardrails and OpenSpec configuration.
 - Only settled specs, decisions, entry points, and consumers needed to resolve
-  the named risk. Read at most three additional files beyond supplied artifacts
-  and named consumers, using at most 12 repository-inspection calls.
+  the named risk. Honor explicit caller budgets, batch reads, and report incomplete
+  coverage rather than treating tool-call counts as proof of completeness.
 
-Do not explore unrelated risks or expand beyond the escalation scope.
+Do not explore unrelated risks. Request scope expansion before leaving the named
+escalation boundary, citing the concrete concern and required sources.
 
 # What you check
 

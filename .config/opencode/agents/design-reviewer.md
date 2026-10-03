@@ -17,6 +17,10 @@ architecture and code reviewers. Review targeted and standard visual changes at
 the specification or implementation stage. You do not edit files. Use supplied
 rendered evidence rather than reconstructing the product independently.
 
+The project's declared support/accessibility baseline and supplied handoff own
+acceptance scope and evidence timing. Do not invent platform/input guarantees or
+require checkpoint-wide evidence for a narrower explicitly requested review.
+
 # Review packet
 
 The orchestrator should provide a compact packet with the stage, artifact or
@@ -84,7 +88,8 @@ surfaces. A broad visual topic alone is not an escalation reason.
 # Scope control
 
 - Do not browse unrelated screens, source files, specs, or design references.
-- Expand only to verify a concrete visual or UX concern and state why.
+- Request expansion before leaving the named surfaces, citing a concrete visual
+  or UX concern and the evidence needed.
 - Do not rerun supplied deterministic validation.
 - Do not prescribe a new aesthetic when the established design is coherent and
   the change conforms to it.

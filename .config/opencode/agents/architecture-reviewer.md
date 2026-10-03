@@ -52,12 +52,13 @@ suspected failure, evidence, and exact additional scope needed.
 
 # Scope control
 
-- Keep the review to at most 8 repository-inspection tool calls. Read at most
-  three files beyond supplied artifacts, entry points, and named direct consumers.
+- Use focused, batched reads of supplied artifacts, entry points, and named direct
+  consumers. Honor explicit caller budgets and report incomplete coverage instead
+  of using a tool-call count as evidence of completeness.
 - Do not perform repository-wide discovery by default.
 - Do not read unrelated specs, ADRs, history, or neighboring subsystems.
-- Expand scope only to verify a concrete concern; state the reason in the
-  resulting finding or clean-review note.
+- Before leaving the named boundary, request scope expansion with a concrete
+  concern and the sources needed to resolve it.
 - Do not rerun deterministic validation already supplied as evidence. Review
   whether the evidence is sufficient and correctly targeted.
 - Security, local-first, persistence, and network checks are applicable only
