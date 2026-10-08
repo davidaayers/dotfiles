@@ -108,6 +108,41 @@ Notes:
   is loaded once at startup and not hot-reloaded.
 * After changing `.zshrc`, run `source ~/.zshrc` or open a new shell.
 
+## OpenCode session cleanup
+
+`bin/opencode-cleanup` is an offline maintenance utility for **OpenCode v1**.
+The `bin/` directory is installed as `~/bin` by dfm and is on the shell PATH.
+It defaults to keeping sessions updated within the last five rolling days,
+across all projects. Parents of retained sessions are also kept, because
+OpenCode deletes child sessions along with their parent.
+
+```bash
+# Preview while OpenCode is running; nothing is deleted or vacuumed.
+~/.dotfiles/bin/opencode-cleanup --keep-days 5 --dry-run
+
+# Quit OpenCode and its servers, then delete old sessions.
+opencode-cleanup --keep-days 5
+
+# Also reclaim database disk space (use after large cleanups or monthly).
+opencode-cleanup --keep-days 5 --vacuum
+```
+
+The script refuses destructive maintenance when another process has the
+database open, prevents overlapping cleanup runs with a lock directory next
+to the database, and logs progress to stdout (errors go to stderr). Stop
+launching OpenCode until maintenance finishes. Dry runs remain read-only.
+It uses `opencode`, `sqlite3`, and `lsof`; the latter two ship with macOS.
+
+For regular maintenance, run deletion daily and vacuum occasionally: SQLite
+reuses deleted space without vacuuming. A macOS `launchd` job can invoke the
+script, but no schedule is installed here. Scheduled jobs must include the
+OpenCode binary directory in `PATH` and capture stdout/stderr; database-in-use
+and other failures exit nonzero so the job can retry on its next scheduled run.
+
+The script intentionally rejects other major versions. OpenCode v2 uses a
+shared background server and different interfaces; closing its UI is not
+sufficient for offline maintenance.
+
 ## Claude Code
 
 The following Claude Code config is tracked in this repo and symlinked by `dfm install`:

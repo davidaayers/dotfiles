@@ -1,0 +1,122 @@
+#!/bin/bash
+# Offline session retention for OpenCode v1; compatible with macOS Bash 3.2.
+set -euo pipefail
+
+usage() {
+  printf '%s\n' \
+    'Usage: opencode-cleanup [--keep-days N] [--dry-run] [--vacuum]' \
+    '' \
+    'Delete sessions last updated more than N days ago (default: 5).' \
+    'Keep recent sessions and all their ancestors, across all projects.' \
+    '' \
+    '  --keep-days N  Retain the last N rolling 24-hour periods (1–36500).' \
+    '  --dry-run      Print deletion targets without changing anything.' \
+    '  --vacuum       Also reclaim database disk space after deletion.' \
+    '  -h, --help     Show this help.' \
+    '' \
+    'Quit OpenCode and its servers before deleting or vacuuming.' \
+    'Dry runs can be performed while OpenCode is running.'
+}
+
+fail() { printf 'opencode-cleanup: %s\n' "$*" >&2; exit 1; }
+log() { printf '[%s] %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*"; }
+
+keep_days=5
+dry_run=false
+vacuum=false
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --keep-days)
+      [ "$#" -ge 2 ] || fail '--keep-days requires a number.'
+      keep_days=$2
+      shift 2
+      ;;
+    --dry-run) dry_run=true; shift ;;
+    --vacuum) vacuum=true; shift ;;
+    -h|--help) usage; exit 0 ;;
+    *) fail "Unknown argument: $1 (use --help)." ;;
+  esac
+done
+
+[[ "$keep_days" =~ ^[1-9][0-9]{0,4}$ ]] || fail '--keep-days must be an integer from 1 to 36500.'
+[ "$keep_days" -le 36500 ] || fail '--keep-days must be an integer from 1 to 36500.'
+for dependency in opencode sqlite3 lsof; do
+  command -v "$dependency" >/dev/null || fail "Required command not found: $dependency"
+done
+
+version=$(opencode --version)
+case "$version" in
+  1.*) ;;
+  *) fail "This script supports OpenCode v1, not $version; its storage/API needs a version-specific implementation." ;;
+esac
+db=$(opencode db path)
+[ -f "$db" ] || fail "Database does not exist: $db"
+
+assert_idle() {
+  local holders status=0
+  # Matching the database itself catches both readers and writers, including servers.
+  holders=$(lsof -t -- "$db" 2>/dev/null) || status=$?
+  [ "$status" -le 1 ] || fail 'Unable to check whether the database is in use.'
+  [ -z "$holders" ] || fail "Database is in use (PID(s): ${holders//$'\n'/, }). Quit OpenCode and its servers, then retry."
+}
+
+if ! "$dry_run"; then
+  lock="$db.cleanup.lock"
+  mkdir "$lock" 2>/dev/null || fail "Cleanup lock exists or cannot be created: $lock. If a previous run was interrupted, remove the empty lock directory after checking no cleanup is running."
+  trap 'rmdir "$lock"' EXIT
+  trap 'exit 130' INT
+  trap 'exit 143' TERM
+  assert_idle
+fi
+
+# Capture the plan before deleting. Keep ancestors because deletion cascades to children.
+# Select only the tops of deletable subtrees, avoiding duplicate child deletions.
+plan=$(sqlite3 -readonly -cmd '.timeout 10000' "$db" "
+  WITH RECURSIVE keep(id) AS (
+    SELECT id FROM session
+    WHERE time_updated >= (unixepoch('now') - $keep_days * 86400) * 1000
+    UNION
+    SELECT s.parent_id FROM session AS s JOIN keep AS k ON s.id = k.id
+    WHERE s.parent_id IS NOT NULL
+  ), candidates AS (
+    SELECT id, parent_id, time_updated FROM session
+    WHERE id NOT IN (SELECT id FROM keep)
+  )
+  SELECT id FROM candidates
+  WHERE parent_id IS NULL OR parent_id NOT IN (SELECT id FROM candidates)
+  ORDER BY time_updated, id;
+")
+
+log "Database: $db; retention: $keep_days days"
+targets=0
+if [ -n "$plan" ]; then
+  while IFS= read -r id; do
+    targets=$((targets + 1))
+    if "$dry_run"; then
+      printf 'Would delete %s (including its child sessions)\n' "$id"
+    else
+      assert_idle
+      log "Deleting $id (including its child sessions)"
+      opencode session delete "$id" || fail "Deletion failed for $id; stopping without vacuuming."
+    fi
+  done <<< "$plan"
+fi
+
+if "$dry_run"; then
+  log "Dry run: $targets session subtree(s) would be deleted; no changes made."
+  if "$vacuum"; then log 'Would checkpoint and vacuum the database after deletion.'; fi
+  exit 0
+fi
+
+log "Deleted $targets session subtree(s)."
+if "$vacuum"; then
+  assert_idle
+  log 'Checkpointing and vacuuming; this may take time and require temporary free space.'
+  # A busy checkpoint must abort maintenance rather than silently continuing.
+  checkpoint=$(sqlite3 -cmd '.timeout 10000' "$db" 'PRAGMA wal_checkpoint(TRUNCATE);')
+  [ "${checkpoint%%|*}" = 0 ] || fail "Checkpoint could not complete: $checkpoint"
+  sqlite3 -cmd '.timeout 10000' "$db" 'VACUUM;'
+  checkpoint=$(sqlite3 -cmd '.timeout 10000' "$db" 'PRAGMA wal_checkpoint(TRUNCATE);')
+  [ "${checkpoint%%|*}" = 0 ] || fail "Final checkpoint could not complete: $checkpoint"
+  log 'Vacuum complete.'
+fi
