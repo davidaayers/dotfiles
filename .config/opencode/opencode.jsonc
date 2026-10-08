@@ -3,6 +3,9 @@
   "model": "openai/gpt-6.1-sol",
   "variant": "max",
   "small_model": "openai/gpt-5.4-mini",
+  "skills": {
+    "paths": ["~/development/tools/ai-skills/proofread"]
+  },
   "agent": {
     "explore": {
       "model": "openai/gpt-6-luna",
