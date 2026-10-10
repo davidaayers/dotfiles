@@ -5,7 +5,7 @@
       {
         "id": "ccusage-daily-cost",
         "type": "custom-command",
-        "commandPath": "/Users/david.ayers/.claude/hooks/ccusage-statusline.sh",
+        "commandPath": "/Users/scott.popplewell/.claude/hooks/ccusage-statusline.sh",
         "timeout": 5000,
         "preserveColors": true
       },

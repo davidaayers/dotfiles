@@ -12,7 +12,6 @@
 	autoSetupRemote = true
 [core]
 	pager = less -FRX
-	editor = mate -w
 [pull]
 	rebase = true
 [init]

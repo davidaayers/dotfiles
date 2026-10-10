@@ -15,7 +15,7 @@ sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.
 
 # Clone and install
 cd $HOME
-git clone git@github.com:davidaayers/dotfiles.git .dotfiles
+git clone https://github.com/scottpopplewell/dotfiles.git .dotfiles
 ./.dotfiles/bin/dfm install   # creates symlinks into $HOME
 
 # Install all tools
@@ -43,29 +43,22 @@ Full install/setup docs live in `README.md` (canonical).
 - `bin/dfm install` symlinks all files from this repo into `$HOME`, preserving directory structure
 - `.dfminstall` controls exceptions: `skip` entries are **not** symlinked
   (`README.md`, `Brewfile`, `CLAUDE.md`), `recurse` entries are recursed into so only
-  their contents get symlinked (`.config`, `.oh-my-zsh`)
+  their contents get symlinked (`.config`, `.claude`)
 - After adding a new dotfile here, re-run `bin/dfm install` to create its symlink
 
 ## Key files
 
 | File | Purpose |
 |------|---------|
-| `.zshrc` | Oh My Zsh config; theme `bira-custom`, plugins, PATH setup |
+| `.zshrc` | Oh My Zsh config; theme `robbyrussell`, plugins, PATH setup |
 | `.gitconfig` | Git aliases, pull-rebase default, includes `~/.gitconfig.local` |
 | `.shellrc.load` | Sourced by `.zshrc`; place for additional PATH entries and shell customizations |
 | `Brewfile` | Declarative list of all Homebrew packages and casks |
-| `.config/opencode/` | opencode global config, agents, and plugin deps (symlinked into `~/.config/opencode`) |
 
 ## Shell setup notes
 
-- Theme: `bira-custom` (custom variant of bira, committed under `.oh-my-zsh/custom/themes/`)
+- Theme: `robbyrussell` (stock Oh My Zsh theme)
 - Node version management: **Volta** only (`~/.volta/bin` on PATH)
-- Python: **pyenv** (`~/.pyenv`), initialized in `.zshrc` via `pyenv init -` (installed separately, not via Brewfile)
-- `$EDITOR` is TextMate (`mate -w`); enable its CLI via TextMate → Settings → Terminal → Install Shell Support
+- Python: **pyenv** (`~/.pyenv`), initialized in `.zshrc` via `pyenv init -` (installed via Brewfile)
 - History search: `zsh-history-substring-search` bound to arrow keys
 - Syntax highlighting: `zsh-syntax-highlighting` (both installed via Homebrew)
-- `tab-chroma` (iTerm2 tab color/title feedback for Claude Code and opencode) is
-  vendored under `.config/tab-chroma/`. Its `config.json` is gitignored because
-  the script rewrites it on theme/feature toggles; `ensure_config()` regenerates
-  defaults. The opencode title logic lives in
-  `.config/opencode/plugin/tab-chroma.ts` (see README for details).

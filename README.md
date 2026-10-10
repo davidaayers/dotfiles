@@ -1,4 +1,4 @@
-# David Ayers Dotfiles & Misc Setup Stuff
+# Dotfiles & Misc Setup Stuff
 
 ## First, install Ohmyzsh
 
@@ -18,7 +18,7 @@ To install your dotfiles onto a new system:
 
 ```
 cd $HOME
-git clone git@github.com:davidaayers/dotfiles.git .dotfiles
+git clone https://github.com/scottpopplewell/dotfiles.git .dotfiles
 ./.dotfiles/bin/dfm install # creates symlinks to install files
 ```
 
@@ -57,69 +57,16 @@ Python is managed with [pyenv](https://github.com/pyenv/pyenv) (now installed wi
 
 Node is managed with [Volta](https://volta.sh/) (installed separately, not via Brewfile).
 
-## tab-chroma (iTerm2 tab colors)
-
-[tab-chroma](https://github.com/JCPetrelli/TabChroma) changes the iTerm2 tab
-color/badge/title to reflect what an AI coding agent is doing (working, done,
-needs approval, etc.). The script is vendored at `.config/tab-chroma/` and
-symlinked into `~/.config/tab-chroma` by `dfm install`, so it's transportable
-between machines.
-
-The script has two parts: a terminal-facing engine (themes, config, debounce,
-iTerm2 escape sequences) and event wiring. The engine is shared; each agent
-wires it up its own way.
-
-**Claude Code** — registers shell hooks in `~/.claude/settings.json` (tracked
-in this repo) that call `tab-chroma.sh` on `SessionStart`/`UserPromptSubmit`/
-`PreToolUse`/`Stop`/`Notification`/`PermissionRequest`. The `claude()` wrapper
-in `.zshrc` resets the tab on exit (Claude Code has no exit hook).
-
-**opencode** — opencode has no hook system, so `.config/opencode/plugin/tab-chroma.ts`
-subscribes to opencode's plugin event bus and pipes the same JSON the script
-expects into `~/.config/tab-chroma/tab-chroma.sh`. The `opencode()` wrapper in
-`.zshrc` resets the tab on exit. The plugin is registered in `opencode.jsonc`
-via `"plugin": ["./plugin/tab-chroma.ts"]`. It only imports Node builtins at
-runtime, so a fresh clone needs no `npm install` to run it (the
-`@opencode-ai/plugin` entry in `package.json` exists only for type-checking).
-
-Color/badge mapping for opencode (unchanged — handled by the vendored script):
-
-| opencode event | tab-chroma state |
-| -------------- | ---------------- |
-| `session.created` | `session.start` (reset) |
-| `session.status` (busy) | `working` |
-| `session.idle` | `done` |
-| `permission.ask` | `permission` |
-
-The tab **title** is driven by the plugin rather than the vendored script, so
-it can show what opencode is actually doing instead of a static "working".
-It subscribes to `message.part.updated` to read the active tool and its
-arguments, producing titles like `◉ myapp · npm test`,
-`◉ myapp · reading foo.ts`, `◉ myapp · thinking`, and `◉ myapp · done`. This
-keeps `tab-chroma.sh` pristine — `tab-chroma update` won't clobber the title
-logic — at the cost of a small duplicated device-resolution/title-write helper
-in the plugin.
-
-Notes:
-
-* `~/.config/tab-chroma/config.json` is gitignored — the script rewrites it on
-  theme/feature toggles and regenerates defaults via `ensure_config()`.
-* After changing `opencode.jsonc` or the plugin, restart opencode — its config
-  is loaded once at startup and not hot-reloaded.
-* After changing `.zshrc`, run `source ~/.zshrc` or open a new shell.
-
 ## Claude Code
 
 The following Claude Code config is tracked in this repo and symlinked by `dfm install`:
 
 | Path | What it is |
 |------|------------|
-| `~/.claude/settings.json` | Permissions, hooks, plugins, model, status line config |
+| `~/.claude/settings.json` | Permissions, plugins, model, status line config |
 | `~/.claude/CLAUDE.md` | Global instructions (Jira/Git rules) |
-| `~/.claude/commands/` | Custom slash commands (badge-on/off, tab-chroma) |
 | `~/.claude/hooks/ccusage-statusline.sh` | Custom status line script |
 | `~/.claude/skills/agent-browser/` | Browser automation skill |
-| `~/.claude/skills/david-voice/` | Writing voice skill |
 | `~/.config/ccstatusline/settings.json` | Status line layout config |
 
 ### Post-install steps
@@ -129,12 +76,6 @@ The following Claude Code config is tracked in this repo and symlinked by `dfm i
 ```
 npm install -g ccusage
 npm install -g ccstatusline
-```
-
-**Install the `/util.md-to-clipboard` skill dependency:**
-
-```
-pip3 install pyobjc-framework-Cocoa
 ```
 
 **Re-authenticate marketplace plugins** — plugins are auth'd per-machine. After first launch, Claude Code will prompt you to authenticate:
@@ -147,11 +88,6 @@ pip3 install pyobjc-framework-Cocoa
 ## Alfred Setup
 
 * [Github Workflow](https://github.com/gharlan/alfred-github-workflow) - install [latest release](https://github.com/gharlan/alfred-github-workflow/releases)
-
-## Other Setup Stuff for new Mac:
-
-* Install Anonymous Pro: https://www.marksimonson.com/fonts/view/anonymous-pro
-* TextMate (`mate`) is the default `$EDITOR`. Enable its CLI: open TextMate once, then TextMate → Settings → Terminal → Install Shell Support.
 
 ## Full documentation
 

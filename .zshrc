@@ -5,14 +5,9 @@ ZSH=$HOME/.oh-my-zsh
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
-ZSH_THEME="bira-custom"
+ZSH_THEME="robbyrussell"
 
-export EDITOR='mate -w'
 export LESS="R"
-
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
 
 alias gs='git status -sb'
 alias gfo="git fetch origin"
@@ -70,31 +65,6 @@ export PATH="$HOME/.local/bin:$PATH"
 # Machine-specific overrides (secrets, model prefs). Not part of dotfiles.
 [ -f "$HOME/.zshrc.local" ] && . "$HOME/.zshrc.local"
 
-# tab-chroma
-alias tab-chroma="$HOME/.config/tab-chroma/tab-chroma.sh"
-
-# tab-chroma: reset tab on claude exit
-claude() {
-  command claude "$@"
-  local rc=$?
-  tab-chroma reset > /dev/null 2>&1
-  return $rc
-}
-
-# tab-chroma: reset tab on opencode exit
-opencode() {
-  command opencode "$@"
-  local rc=$?
-  tab-chroma reset > /dev/null 2>&1
-  return $rc
-}
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
-
-# opencode
-export PATH="$HOME/.opencode/bin:$PATH"
-
-ANTHROPIC_MODEL="claude-sonnet-4-6"
-
-alias cla="claude --model claude-sonnet-4-6"
