@@ -2,7 +2,10 @@
   "name": "opencode-config",
   "private": true,
   "version": "0.0.0",
-  "dependencies": {
-    "@opencode-ai/plugin": "1.18.21"
+  "scripts": {
+    "test": "bun test ./tests/plugins.test.ts"
+  },
+  "devDependencies": {
+    "@opencode/plugin": "2.1.3"
   }
 }

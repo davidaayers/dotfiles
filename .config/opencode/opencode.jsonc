@@ -3,6 +3,9 @@
   "model": "openai/gpt-6.1-sol",
   "variant": "max",
   "small_model": "openai/gpt-5.4-mini",
+  "experimental": {
+    "todo": true
+  },
   "skills": {
     "paths": ["~/development/tools/ai-skills/proofread"]
   },
@@ -16,7 +19,7 @@
       "variant": "max"
     }
   },
-  "plugin": ["./plugin/tab-chroma.ts", "./plugin/todo-nudge.ts"],
+  "plugins": ["./plugins/todo-nudge", "./plugins/clipboard-image"],
   // gdscript LSP: bridge needs --project pointing at game/ (project.godot is not
   // at the repo root and the bridge only searches upward). Port is derived from
   // the checkout path so main repo and worktrees don't collide on 6005.

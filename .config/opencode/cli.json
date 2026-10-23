@@ -1,0 +1,17 @@
+{
+  "$schema": "https://opencode.ai/v2/cli.json",
+  "plugins": [
+    "@davidaayers/opencode-context-gauge-plugin@1.0.0",
+    "@davidaayers/opencode-go-usage-plugin@1.0.0",
+    "@davidaayers/opencode-codex-usage-plugin@1.0.0"
+  ],
+  "diffs": {
+    "wrap": "word"
+  },
+  "session": {
+    "sidebar": "auto",
+    "scrollbar": false,
+    "thinking": "hide"
+  },
+  "animations": true
+}

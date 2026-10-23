@@ -68,4 +68,4 @@ Full install/setup docs live in `README.md` (canonical).
   vendored under `.config/tab-chroma/`. Its `config.json` is gitignored because
   the script rewrites it on theme/feature toggles; `ensure_config()` regenerates
   defaults. The opencode title logic lives in
-  `.config/opencode/plugin/tab-chroma.ts` (see README for details).
+   `.config/opencode/plugins/tab-chroma/tui.ts` (see README for details).

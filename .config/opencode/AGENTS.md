@@ -18,6 +18,17 @@ Prefer dedicated Glob, Grep, and Read tools for file discovery and inspection.
 When shell searching is necessary, use `rg` rather than `grep` or `find`.
 Use `ls` for required parent-directory verification, not recursive discovery.
 
+## Local File Links
+
+When presenting clickable links to local files, including screenshots, use an
+absolute `file://` URL as the Markdown link target so terminal clients such as
+iTerm2 can open it correctly. For example:
+`[View screenshot](file:///Users/david/project/screenshot.png)`.
+Do not use a bare filesystem path or a relative path as a local hyperlink target.
+Percent-encode spaces and other URL-sensitive path characters (for example,
+`%20` for a space and `%23` for `#`). Plain file references in code spans and
+paths in shell commands should retain their normal filesystem syntax.
+
 ## Review Policy
 
 Follow the active project's review and validation workflow when one exists. The

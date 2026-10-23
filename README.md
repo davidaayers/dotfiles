@@ -29,6 +29,8 @@ Secrets and identity are kept out of the repo. Create these locally:
 * `~/.zshrc.local` (sourced by `.zshrc`) — exports tokens read from `~/.config/secrets/`:
   * `~/.config/secrets/homebrew_api_token` — GitHub PAT (no permissions needed) for Homebrew
   * `~/.config/secrets/npm_token` — NPM token with publish access
+* `~/.config/opencode/service.json` — generated local OpenCode service settings,
+  including its password. Gitignored; do not copy it between machines or commit it.
 
 ## Set up Git on a new machine
 
@@ -74,27 +76,29 @@ in this repo) that call `tab-chroma.sh` on `SessionStart`/`UserPromptSubmit`/
 `PreToolUse`/`Stop`/`Notification`/`PermissionRequest`. The `claude()` wrapper
 in `.zshrc` resets the tab on exit (Claude Code has no exit hook).
 
-**opencode** — opencode has no hook system, so `.config/opencode/plugin/tab-chroma.ts`
-subscribes to opencode's plugin event bus and pipes the same JSON the script
-expects into `~/.config/tab-chroma/tab-chroma.sh`. The `opencode()` wrapper in
-`.zshrc` resets the tab on exit. The plugin is registered in `opencode.jsonc`
-via `"plugin": ["./plugin/tab-chroma.ts"]`. It only imports Node builtins at
-runtime, so a fresh clone needs no `npm install` to run it (the
-`@opencode-ai/plugin` entry in `package.json` exists only for type-checking).
+**OpenCode V2** — `.config/opencode/plugins/tab-chroma/tui.ts` runs in the
+terminal client and forwards events to `~/.config/tab-chroma/tab-chroma.sh`.
+V2 discovers this CLI plugin automatically; it is not a server plugin and does
+not need an entry in `opencode.jsonc` or `cli.json`. Running client-side matters:
+the shared server has no terminal, and events from another terminal must not
+change this window. Only the currently viewed session drives its tab feedback.
+The `opencode()` wrapper in `.zshrc` resets the tab on exit. Runtime imports are
+Node builtins only; no `npm install` is required.
 
 Color/badge mapping for opencode (unchanged — handled by the vendored script):
 
 | opencode event | tab-chroma state |
 | -------------- | ---------------- |
-| `session.created` | `session.start` (reset) |
-| `session.status` (busy) | `working` |
-| `session.idle` | `done` |
-| `permission.ask` | `permission` |
+| Selected session changes (including resumed sessions) | `session.start`, then current state |
+| `session.execution.started` | `working` |
+| `session.execution.succeeded`, `.failed`, `.interrupted` | `done` |
+| `permission.asked` | `permission` |
+| `permission.replied` | `working` |
 
 The tab **title** is driven by the plugin rather than the vendored script, so
 it can show what opencode is actually doing instead of a static "working".
-It subscribes to `message.part.updated` to read the active tool and its
-arguments, producing titles like `◉ myapp · npm test`,
+It subscribes to V2 `session.tool.input.started` / `session.tool.called` and
+text/reasoning events to read the active tool and its arguments, producing titles like `◉ myapp · npm test`,
 `◉ myapp · reading foo.ts`, `◉ myapp · thinking`, and `◉ myapp · done`. This
 keeps `tab-chroma.sh` pristine — `tab-chroma update` won't clobber the title
 logic — at the cost of a small duplicated device-resolution/title-write helper
@@ -104,9 +108,71 @@ Notes:
 
 * `~/.config/tab-chroma/config.json` is gitignored — the script rewrites it on
   theme/feature toggles and regenerates defaults via `ensure_config()`.
-* After changing `opencode.jsonc` or the plugin, restart opencode — its config
-  is loaded once at startup and not hot-reloaded.
+* V2 watches local plugins for changes. Check `/plugins` for loading errors;
+  restart the TUI if it is still showing an old plugin generation.
 * After changing `.zshrc`, run `source ~/.zshrc` or open a new shell.
+
+## OpenCode V2
+
+Server settings live in `.config/opencode/opencode.jsonc`; terminal settings live
+in `.config/opencode/cli.json`. V2 uses `cli.json`, not the retired V1 `tui.json`.
+Supported legacy server-config fields can remain in `opencode.jsonc`; converting
+all of them to native V2 syntax is not required.
+
+### Published sidebar plugins
+
+`cli.json` pins the released packages, not local development checkouts:
+
+```json
+{
+  "plugins": [
+    "@davidaayers/opencode-context-gauge-plugin@1.0.0",
+    "@davidaayers/opencode-go-usage-plugin@1.0.0",
+    "@davidaayers/opencode-codex-usage-plugin@1.0.0"
+  ]
+}
+```
+
+These releases require OpenCode `>=2.1.3 <3`. No local re-export wrappers or
+duplicate server-config entries are needed. Go and Codex usage widgets appear
+only in matching provider sessions. Use `/plugins` to inspect loading failures;
+press Ctrl+A there to show internal plugins. Built-ins register before external
+plugins in 2.1.3: listing an internal ID later enables it but does not reorder it.
+
+### Todo reminders
+
+`.config/opencode/plugins/todo-nudge/index.ts` is a V2 server plugin, enabled
+by the `plugins` array in `opencode.jsonc`. Its `context` hook appends a pointer
+to the global AGENTS.md Todo List Currency rule before each agent-loop model
+request. It does not add its own policy or modify persisted messages.
+
+The `todowrite` tool is off by default in V2. `opencode.jsonc` enables it with
+`"experimental": { "todo": true }`. The built-in `opencode.sidebar.todo` widget
+displays the structured tool data, not Markdown checklists in assistant replies.
+
+### Clipboard image fallback
+
+`.config/opencode/plugins/clipboard-image/index.ts` registers the V2
+`clipboard_image` tool through the server `plugins` array. It preserves the old
+clipboard helper without the V1 plugin API. It checks the `clipboard_image`
+permission before reading the macOS clipboard and saves PNGs under the system
+temporary directory. It reads the **server host's** clipboard; use normal image
+attachments for remote sessions.
+
+### Local plugin development
+
+The local plugins use Node builtins at runtime; OpenCode supplies the plugin API.
+`package.json` pins `@opencode/plugin@2.1.3` as a development-only dependency for
+editor types (`npm ci` from `.config/opencode`). No V1 plugin dependency remains.
+
+Run the local plugin behavior tests from the dotfiles repository:
+
+```sh
+bun test ./.config/opencode/tests/plugins.test.ts
+```
+
+The tests replace filesystem and subprocess output so they do not recolor your
+terminal or launch the real Tab Chroma script.
 
 ## OpenCode session cleanup
 
@@ -142,6 +208,10 @@ and other failures exit nonzero so the job can retry on its next scheduled run.
 The script intentionally rejects other major versions. OpenCode v2 uses a
 shared background server and different interfaces; closing its UI is not
 sufficient for offline maintenance.
+
+V2 has no documented age-based session retention setting. Its experimental
+`location_idle_timeout` unloads inactive project services, not session history.
+Leave this V1 utility unused on V2; do not bypass its version guard.
 
 ## Claude Code
 
