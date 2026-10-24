@@ -19,7 +19,10 @@
       "variant": "max"
     }
   },
-  "plugins": ["./plugins/todo-nudge", "./plugins/clipboard-image"],
+  "plugins": [
+    "./plugins/todo-nudge",
+    "./plugins/clipboard-image"
+  ],
   // gdscript LSP: bridge needs --project pointing at game/ (project.godot is not
   // at the repo root and the bridge only searches upward). Port is derived from
   // the checkout path so main repo and worktrees don't collide on 6005.
@@ -39,6 +42,11 @@
       }
     }
   },
+  "permissions": [
+    { "action": "external_directory", "resource": "~/Downloads/*", "effect": "allow" },
+    { "action": "read", "resource": "~/Downloads/*", "effect": "allow" },
+    { "action": "edit", "resource": "~/Downloads/*", "effect": "allow" }
+  ],
   "permission": {
     "edit": { "/var/folders/**": "allow" },
     "external_directory": {
