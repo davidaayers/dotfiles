@@ -92,9 +92,6 @@ export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 
-# opencode
-export PATH="$HOME/.opencode/bin:$PATH"
-
 ANTHROPIC_MODEL="claude-sonnet-4-6"
 
 alias cla="claude --model claude-sonnet-4-6"
