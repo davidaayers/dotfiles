@@ -66,6 +66,7 @@ bindkey '^[OB' history-substring-search-down
 export VOLTA_HOME="$HOME/.volta"
 export PATH="$VOLTA_HOME/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.opencode/bin:$PATH"
 
 # Machine-specific overrides (secrets, model prefs). Not part of dotfiles.
 [ -f "$HOME/.zshrc.local" ] && . "$HOME/.zshrc.local"
