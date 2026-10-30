@@ -3,7 +3,7 @@ brew "git"
 brew "zsh-syntax-highlighting"
 brew "zsh-history-substring-search"
 brew "pyenv"
-brew "anomalyco/tap/opencode"
+brew "anomalyco/tap/opencode-v2", trusted: true # OpenCode V2; third-party tap must be trusted for `brew bundle` to load it
 brew "gh"
 brew "pandoc"
 

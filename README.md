@@ -55,6 +55,36 @@ The `Brewfile` included in the .dotfiles directory uses [brew bundle](https://gi
 
 `brew bundle --file ~/.dotfiles/Brewfile`
 
+### Trusting third-party taps
+
+Homebrew refuses to load formulae from non-official taps until they are trusted.
+OpenCode V2 is installed from `anomalyco/tap/opencode-v2`, so a fresh machine can
+fail with:
+
+```
+Error: Refusing to load formula anomalyco/tap/opencode-v2 from untrusted tap anomalyco/tap.
+Run `brew trust --formula anomalyco/tap/opencode-v2` or `brew trust anomalyco/tap` to trust it.
+```
+
+The `Brewfile` marks that entry `trusted: true`, so `brew bundle` records the
+trust for you. If you install the formula outside the Brewfile, trust it once:
+
+```sh
+brew trust --formula anomalyco/tap/opencode-v2
+```
+
+Trust is per machine and is stored in `$XDG_CONFIG_HOME/homebrew/trust.json`
+(or `~/.homebrew/trust.json`), not in this repo. Run `brew trust` with no
+arguments to review the current list.
+
+`opencode-v2` installs the binary as `opencode` and declares a conflict with the
+legacy `anomalyco/tap/opencode` (v1) formula. Do not install both: remove v1
+before installing v2 on a machine that already has it.
+
+```sh
+brew uninstall opencode
+```
+
 Python is managed with [pyenv](https://github.com/pyenv/pyenv) (now installed with Brewfile).
 
 Node is managed with [Volta](https://volta.sh/) (installed separately, not via Brewfile).
