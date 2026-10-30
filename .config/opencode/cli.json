@@ -2,7 +2,6 @@
   "$schema": "https://opencode.ai/v2/cli.json",
   "plugins": [
     "-opencode.sidebar.context",
-    "-opencode.prompt.footer",
     "@davidaayers/opencode-context-gauge-plugin@1.0.2",
     "@davidaayers/opencode-go-usage-plugin@1.0.2",
     {
@@ -17,5 +16,8 @@
     "scrollbar": false,
     "thinking": "hide"
   },
-  "animations": true
+  "animations": true,
+  "tabs": {
+    "mode": "off"
+  }
 }

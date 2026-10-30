@@ -7,7 +7,7 @@
     "todo": true
   },
   "skills": {
-    "paths": ["~/development/tools/ai-skills/proofread"]
+    "paths": ["~/development/personal/tools/ai-skills/proofread"]
   },
   "agent": {
     "explore": {
@@ -21,7 +21,8 @@
   },
   "plugins": [
     "./plugins/todo-nudge",
-    "./plugins/clipboard-image"
+    "./plugins/clipboard-image",
+    "@rizal72/oc-coffee@0.2.1"
   ],
   // gdscript LSP: bridge needs --project pointing at game/ (project.godot is not
   // at the repo root and the bridge only searches upward). Port is derived from
@@ -55,7 +56,7 @@
       "/private/tmp/**": "allow",
       "/var/folders/**": "allow",
       // local Godot reference clones (engine source @ 4.7.1-stable, docs, demos)
-      "~/development/godot/**": "allow"
+      "~/development/reference/godot/**": "allow"
     }
   },
   "provider": {
