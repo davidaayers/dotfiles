@@ -1,122 +1,188 @@
-#!/bin/bash
-# Offline session retention for OpenCode v1; compatible with macOS Bash 3.2.
-set -euo pipefail
+#!/usr/bin/env python3
+"""Offline session retention for OpenCode V2 (Python standard library only)."""
 
-usage() {
-  printf '%s\n' \
-    'Usage: opencode-cleanup [--keep-days N] [--dry-run] [--vacuum]' \
-    '' \
-    'Delete sessions last updated more than N days ago (default: 5).' \
-    'Keep recent sessions and all their ancestors, across all projects.' \
-    '' \
-    '  --keep-days N  Retain the last N rolling 24-hour periods (1–36500).' \
-    '  --dry-run      Print deletion targets without changing anything.' \
-    '  --vacuum       Also reclaim database disk space after deletion.' \
-    '  -h, --help     Show this help.' \
-    '' \
-    'Quit OpenCode and its servers before deleting or vacuuming.' \
-    'Dry runs can be performed while OpenCode is running.'
-}
+import argparse
+from contextlib import closing
+import json
+import math
+from pathlib import Path
+import re
+import shutil
+import signal
+import sqlite3
+import subprocess
+import sys
+import time
+from urllib.parse import urlencode
 
-fail() { printf 'opencode-cleanup: %s\n' "$*" >&2; exit 1; }
-log() { printf '[%s] %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*"; }
 
-keep_days=5
-dry_run=false
-vacuum=false
-while [ "$#" -gt 0 ]; do
-  case "$1" in
-    --keep-days)
-      [ "$#" -ge 2 ] || fail '--keep-days requires a number.'
-      keep_days=$2
-      shift 2
-      ;;
-    --dry-run) dry_run=true; shift ;;
-    --vacuum) vacuum=true; shift ;;
-    -h|--help) usage; exit 0 ;;
-    *) fail "Unknown argument: $1 (use --help)." ;;
-  esac
-done
+class CleanupError(Exception):
+    pass
 
-[[ "$keep_days" =~ ^[1-9][0-9]{0,4}$ ]] || fail '--keep-days must be an integer from 1 to 36500.'
-[ "$keep_days" -le 36500 ] || fail '--keep-days must be an integer from 1 to 36500.'
-for dependency in opencode sqlite3 lsof; do
-  command -v "$dependency" >/dev/null || fail "Required command not found: $dependency"
-done
 
-version=$(opencode --version)
-case "$version" in
-  1.*) ;;
-  *) fail "This script supports OpenCode v1, not $version; its storage/API needs a version-specific implementation." ;;
-esac
-db=$(opencode db path)
-[ -f "$db" ] || fail "Database does not exist: $db"
+def run(*args):
+    result = subprocess.run(args, text=True, capture_output=True)
+    if result.returncode:
+        raise CleanupError(f"{' '.join(args)} failed: {result.stderr.strip()}")
+    return result.stdout.strip()
 
-assert_idle() {
-  local holders status=0
-  # Matching the database itself catches both readers and writers, including servers.
-  holders=$(lsof -t -- "$db" 2>/dev/null) || status=$?
-  [ "$status" -le 1 ] || fail 'Unable to check whether the database is in use.'
-  [ -z "$holders" ] || fail "Database is in use (PID(s): ${holders//$'\n'/, }). Quit OpenCode and its servers, then retry."
-}
 
-if ! "$dry_run"; then
-  lock="$db.cleanup.lock"
-  mkdir "$lock" 2>/dev/null || fail "Cleanup lock exists or cannot be created: $lock. If a previous run was interrupted, remove the empty lock directory after checking no cleanup is running."
-  trap 'rmdir "$lock"' EXIT
-  trap 'exit 130' INT
-  trap 'exit 143' TERM
-  assert_idle
-fi
+def api(path):
+    # Never start/reconnect the shared service during offline maintenance.
+    # Each private server exits with its CLI invocation.
+    return json.loads(run('opencode', 'api', '--standalone', 'get', path))
 
-# Capture the plan before deleting. Keep ancestors because deletion cascades to children.
-# Select only the tops of deletable subtrees, avoiding duplicate child deletions.
-plan=$(sqlite3 -readonly -cmd '.timeout 10000' "$db" "
-  WITH RECURSIVE keep(id) AS (
-    SELECT id FROM session
-    WHERE time_updated >= (unixepoch('now') - $keep_days * 86400) * 1000
-    UNION
-    SELECT s.parent_id FROM session AS s JOIN keep AS k ON s.id = k.id
-    WHERE s.parent_id IS NOT NULL
-  ), candidates AS (
-    SELECT id, parent_id, time_updated FROM session
-    WHERE id NOT IN (SELECT id FROM keep)
-  )
-  SELECT id FROM candidates
-  WHERE parent_id IS NULL OR parent_id NOT IN (SELECT id FROM candidates)
-  ORDER BY time_updated, id;
-")
 
-log "Database: $db; retention: $keep_days days"
-targets=0
-if [ -n "$plan" ]; then
-  while IFS= read -r id; do
-    targets=$((targets + 1))
-    if "$dry_run"; then
-      printf 'Would delete %s (including its child sessions)\n' "$id"
-    else
-      assert_idle
-      log "Deleting $id (including its child sessions)"
-      opencode session delete "$id" || fail "Deletion failed for $id; stopping without vacuuming."
-    fi
-  done <<< "$plan"
-fi
+def assert_idle(db):
+    result = subprocess.run(['lsof', '-t', '--', str(db)], text=True,
+                            capture_output=True)
+    if result.returncode not in (0, 1) or result.stderr.strip():
+        raise CleanupError('Unable to check whether the database is in use.')
+    if result.stdout.strip():
+        raise CleanupError('Database is in use. Quit all OpenCode clients, run '
+                           '`opencode service stop`, then retry. Do not launch '
+                           'OpenCode until cleanup finishes.')
 
-if "$dry_run"; then
-  log "Dry run: $targets session subtree(s) would be deleted; no changes made."
-  if "$vacuum"; then log 'Would checkpoint and vacuum the database after deletion.'; fi
-  exit 0
-fi
 
-log "Deleted $targets session subtree(s)."
-if "$vacuum"; then
-  assert_idle
-  log 'Checkpointing and vacuuming; this may take time and require temporary free space.'
-  # A busy checkpoint must abort maintenance rather than silently continuing.
-  checkpoint=$(sqlite3 -cmd '.timeout 10000' "$db" 'PRAGMA wal_checkpoint(TRUNCATE);')
-  [ "${checkpoint%%|*}" = 0 ] || fail "Checkpoint could not complete: $checkpoint"
-  sqlite3 -cmd '.timeout 10000' "$db" 'VACUUM;'
-  checkpoint=$(sqlite3 -cmd '.timeout 10000' "$db" 'PRAGMA wal_checkpoint(TRUNCATE);')
-  [ "${checkpoint%%|*}" = 0 ] || fail "Final checkpoint could not complete: $checkpoint"
-  log 'Vacuum complete.'
-fi
+def list_sessions():
+    sessions = {}
+    cursor = None
+    seen_cursors = set()
+    while True:
+        params = {'limit': '100', 'order': 'asc'}
+        if cursor:
+            params['cursor'] = cursor
+        page = api('/api/session?' + urlencode(params))
+        if not isinstance(page, dict) or not isinstance(page.get('data'), list):
+            raise CleanupError('Unexpected V2 session list response.')
+        if not isinstance(page.get('cursor'), dict):
+            raise CleanupError('Missing V2 pagination information; refusing a partial plan.')
+        for session in page['data']:
+            if not isinstance(session, dict) or not isinstance(session.get('time'), dict):
+                raise CleanupError('Unexpected V2 session fields; refusing cleanup.')
+            sid = session.get('id')
+            updated = session['time'].get('updated')
+            parent = session.get('parentID')
+            if (not isinstance(sid, str) or not re.fullmatch(r'ses[a-zA-Z0-9_]+', sid)
+                    or isinstance(updated, bool) or not isinstance(updated, (int, float))
+                    or not math.isfinite(updated)
+                    or (parent is not None and not isinstance(parent, str))):
+                raise CleanupError('Unexpected V2 session fields; refusing cleanup.')
+            if sid in sessions:
+                raise CleanupError('Session list changed during pagination; retry when idle.')
+            sessions[sid] = session
+        cursor = page['cursor'].get('next')
+        if cursor is None:
+            return sessions
+        if not isinstance(cursor, str) or not cursor or cursor in seen_cursors:
+            raise CleanupError('Invalid/repeated pagination cursor; refusing a partial plan.')
+        seen_cursors.add(cursor)
+
+
+def make_plan(sessions, cutoff):
+    # Validate the complete forest before relying on cascading deletion.
+    checked = set()
+    for sid in sessions:
+        chain = set()
+        current = sid
+        while current is not None and current not in checked:
+            if current not in sessions or current in chain:
+                raise CleanupError('Missing parent or cycle in session list; refusing cleanup.')
+            chain.add(current)
+            current = sessions[current].get('parentID')
+        checked.update(chain)
+
+    keep = set()
+    for sid, session in sessions.items():
+        if session['time']['updated'] >= cutoff:
+            while sid is not None and sid not in keep:
+                keep.add(sid)
+                sid = sessions[sid].get('parentID')
+    candidates = sessions.keys() - keep
+    roots = [sid for sid in candidates
+             if sessions[sid].get('parentID') not in candidates]
+    roots.sort(key=lambda sid: (sessions[sid]['time']['updated'], sid))
+    return roots, len(candidates)
+
+
+def vacuum_database(db):
+    assert_idle(db)
+    # VACUUM may need approximately one database's worth of temporary space.
+    required = db.stat().st_size + 1024 ** 3
+    if shutil.disk_usage(db.parent).free < required:
+        raise CleanupError('Not enough free space for VACUUM (database size + 1 GiB required).')
+    with closing(sqlite3.connect(str(db), timeout=10)) as connection:
+        for statement in ('PRAGMA wal_checkpoint(TRUNCATE)', 'VACUUM',
+                          'PRAGMA wal_checkpoint(TRUNCATE)'):
+            row = connection.execute(statement).fetchone()
+            if statement.startswith('PRAGMA') and row[0] != 0:
+                raise CleanupError(f'Checkpoint could not complete: {row}')
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description='Delete OpenCode V2 sessions inactive for N rolling days, across all projects.',
+        epilog='Quit all clients and run `opencode service stop` before deletion/vacuum. '
+               'Back up the database first. Dry runs may run while OpenCode is open.')
+    parser.add_argument('--keep-days', type=int, default=5, metavar='N',
+                        help='Retain N rolling 24-hour periods (1–36500; default: 5)')
+    parser.add_argument('--dry-run', action='store_true', help='Preview only; no deletion or vacuum')
+    parser.add_argument('--vacuum', action='store_true', help='Also reclaim database disk space offline')
+    args = parser.parse_args()
+    if not 1 <= args.keep_days <= 36500:
+        parser.error('--keep-days must be an integer from 1 to 36500')
+    for dependency in ('opencode', 'lsof'):
+        if shutil.which(dependency) is None:
+            raise CleanupError(f'Required command not found: {dependency}')
+    version = run('opencode', '--version')
+    if not re.fullmatch(r'(?:opencode v)?2\.[^\s]+', version):
+        raise CleanupError(f'This script supports OpenCode V2, not {version}.')
+    db = Path(run('opencode', 'debug', 'paths', 'db')).resolve()
+    if not db.is_file():
+        raise CleanupError(f'Database does not exist: {db}')
+    lock = Path(str(db) + '.cleanup.lock')
+    locked = False
+    try:
+        if not args.dry_run:
+            try:
+                lock.mkdir()
+            except FileExistsError:
+                raise CleanupError(f'Cleanup lock exists: {lock}. Check for another cleanup '
+                                   'before removing an interrupted run’s empty lock directory.')
+            locked = True
+            assert_idle(db)
+        cutoff = (time.time() - args.keep_days * 86400) * 1000
+        sessions = list_sessions()
+        roots, count = make_plan(sessions, cutoff)
+        print(f'Database: {db}; retention: {args.keep_days} days')
+        print(f'{len(sessions)} sessions total; {count} old sessions in '
+              f'{len(roots)} deletable subtree(s); {len(sessions) - count} retained.')
+        for sid in roots:
+            if args.dry_run:
+                print(f'Would delete {sid} (including its child sessions)')
+            else:
+                assert_idle(db)
+                print(f'Deleting {sid} (including its child sessions)', flush=True)
+                run('opencode', 'session', 'delete', '--standalone', sid)
+        if args.dry_run:
+            print('Dry run complete: no sessions deleted; database not vacuumed.')
+            if args.vacuum:
+                print('Would checkpoint and vacuum the database after deletion.')
+        elif args.vacuum:
+            print('Checkpointing and vacuuming; this may take time.', flush=True)
+            vacuum_database(db)
+            print('Vacuum complete.')
+    finally:
+        if locked:
+            lock.rmdir()
+
+
+if __name__ == '__main__':
+    signal.signal(signal.SIGTERM, lambda signum, frame: sys.exit(128 + signum))
+    try:
+        main()
+    except (CleanupError, OSError, ValueError, sqlite3.Error) as error:
+        print(f'opencode-cleanup: {error}', file=sys.stderr)
+        sys.exit(1)
+    except KeyboardInterrupt:
+        sys.exit(130)

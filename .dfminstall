@@ -1,6 +1,7 @@
 README.md skip
 Brewfile skip
 CLAUDE.md skip
+tests skip
 .config recurse
 .oh-my-zsh recurse
 .claude recurse

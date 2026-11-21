@@ -206,7 +206,7 @@ terminal or launch the real Tab Chroma script.
 
 ## OpenCode session cleanup
 
-`bin/opencode-cleanup` is an offline maintenance utility for **OpenCode v1**.
+`bin/opencode-cleanup` is an offline maintenance utility for **OpenCode V2**.
 The `bin/` directory is installed as `~/bin` by dfm and is on the shell PATH.
 It defaults to keeping sessions updated within the last five rolling days,
 across all projects. Parents of retained sessions are also kept, because
@@ -216,18 +216,30 @@ OpenCode deletes child sessions along with their parent.
 # Preview while OpenCode is running; nothing is deleted or vacuumed.
 ~/.dotfiles/bin/opencode-cleanup --keep-days 5 --dry-run
 
-# Quit OpenCode and its servers, then delete old sessions.
+# Quit every OpenCode client, then stop the shared service.
+opencode service stop
+
+# Back up the database to a disk with sufficient free space before deletion.
+# Then delete old sessions (irreversible).
 opencode-cleanup --keep-days 5
 
 # Also reclaim database disk space (use after large cleanups or monthly).
 opencode-cleanup --keep-days 5 --vacuum
 ```
 
+The script uses V2's paginated session API across all projects, including child
+and archived sessions, and preserves ancestors of recently updated sessions.
+It invokes commands with `--standalone` so maintenance never restarts the shared
+service. Previewing starts temporary private servers and reads session metadata;
+it does not delete sessions or vacuum, but normal OpenCode startup may write state.
+
 The script refuses destructive maintenance when another process has the
 database open, prevents overlapping cleanup runs with a lock directory next
 to the database, and logs progress to stdout (errors go to stderr). Stop
-launching OpenCode until maintenance finishes. Dry runs remain read-only.
-It uses `opencode`, `sqlite3`, and `lsof`; the latter two ship with macOS.
+launching OpenCode until maintenance finishes. It uses `opencode`, Python 3
+(standard library only), and `lsof`. It does not automatically stop or restart
+your service. VACUUM requires at least the database size plus 1 GiB free on its
+volume and may also need temporary space on the system temporary volume.
 
 For regular maintenance, run deletion daily and vacuum occasionally: SQLite
 reuses deleted space without vacuuming. A macOS `launchd` job can invoke the
@@ -235,13 +247,22 @@ script, but no schedule is installed here. Scheduled jobs must include the
 OpenCode binary directory in `PATH` and capture stdout/stderr; database-in-use
 and other failures exit nonzero so the job can retry on its next scheduled run.
 
-The script intentionally rejects other major versions. OpenCode v2 uses a
-shared background server and different interfaces; closing its UI is not
-sufficient for offline maintenance.
+The script intentionally rejects other major versions. Closing the V2 UI alone
+is not sufficient for offline maintenance: the shared service must also stop.
 
 V2 has no documented age-based session retention setting. Its experimental
 `location_idle_timeout` unloads inactive project services, not session history.
-Leave this V1 utility unused on V2; do not bypass its version guard.
+Session cleanup removes history, not package caches or snapshot repositories.
+SQLite reuses freed pages; use `--vacuum` to shrink the database file.
+
+Run the focused tests (no real OpenCode data is changed):
+
+```sh
+python3 -B -m unittest discover -s tests -p 'test_opencode_cleanup.py'
+```
+
+Set `OPENCODE_CLEANUP_INTEGRATION=1` to also exercise the installed V2 CLI
+against an isolated temporary database (including deletion and vacuum).
 
 ## Claude Code
 
