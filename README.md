@@ -85,7 +85,11 @@ before installing v2 on a machine that already has it.
 brew uninstall opencode
 ```
 
-Python is managed with [pyenv](https://github.com/pyenv/pyenv) (now installed with Brewfile).
+Python is managed by [pyenv](https://github.com/pyenv/pyenv) by default.
+The Brewfile installs it, and `.zshrc` initializes it when available.
+On a machine that uses [uv](https://docs.astral.sh/uv/) instead, install uv
+separately and set `DOTFILES_DISABLE_PYENV=1` in `~/.zshrc.local`.
+This skips shell initialization; it does not change what `brew bundle` installs.
 
 Node is managed with [Volta](https://volta.sh/) (installed separately, not via Brewfile).
 

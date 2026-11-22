@@ -89,9 +89,13 @@ opencode() {
   tab-chroma reset > /dev/null 2>&1
   return $rc
 }
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
+if [[ ${DOTFILES_DISABLE_PYENV:-0} != 1 ]]; then
+  export PYENV_ROOT="$HOME/.pyenv"
+  export PATH="$PYENV_ROOT/bin:$PATH"
+  if command -v pyenv >/dev/null 2>&1; then
+    eval "$(pyenv init -)"
+  fi
+fi
 
 ANTHROPIC_MODEL="claude-sonnet-4-6"
 

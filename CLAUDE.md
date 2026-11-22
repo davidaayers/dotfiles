@@ -60,7 +60,7 @@ Full install/setup docs live in `README.md` (canonical).
 
 - Theme: `bira-custom` (custom variant of bira, committed under `.oh-my-zsh/custom/themes/`)
 - Node version management: **Volta** only (`~/.volta/bin` on PATH)
-- Python: **pyenv** (`~/.pyenv`), initialized in `.zshrc` via `pyenv init -` (installed separately, not via Brewfile)
+- Python: **pyenv** by default (installed via Brewfile). Set `DOTFILES_DISABLE_PYENV=1` in `~/.zshrc.local` on machines that use uv instead.
 - `$EDITOR` is TextMate (`mate -w`); enable its CLI via TextMate → Settings → Terminal → Install Shell Support
 - History search: `zsh-history-substring-search` bound to arrow keys
 - Syntax highlighting: `zsh-syntax-highlighting` (both installed via Homebrew)
